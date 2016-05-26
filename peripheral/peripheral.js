@@ -2,23 +2,19 @@ var util = require('util');
 var os = require('os');
 var bleno = require('eddystone-beacon/node_modules/bleno');
 var eddystone = require('eddystone-beacon');
-
-if (process.arch !== 'x64') {
-  var five = require('johnny-five');
-  var Edison = require('edison-io');
-  var led;
-  var board = new five.Board({ io: new Edison() });
-  board.on('ready', function () {
-    led = new five.Led('J19-6');
-    led.on();
-  });
-  board.on('warn', function () {
-    led.off();
-  });
-}
-
+var five = require('johnny-five');
+var Edison = require('edison-io');
+var led = '';
+var board = new five.Board({ io: new Edison() });
+board.on('ready', function () {
+  led = new five.Led('J19-6');
+  led.on();
+});
+board.on('warn', function () {
+  led.off();
+});
 var name = 'PW_Coffee';
-var url = 'https://google.fr';
+var url = 'https://goo.gl/TWmm3H';
 bleno.on('stateChange', function (state) {
   console.log('on -> stateChange: ' + state);
   if (state === 'poweredOn') {
@@ -39,4 +35,6 @@ function startBeacon() {
   console.log('Starting beacon.');
   var config = { 'name': name };
   eddystone.advertiseUrl(url, config);
+  led.off();
+  led.blink();
 }
