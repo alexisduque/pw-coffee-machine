@@ -1,0 +1,10 @@
+[Unit]
+Description=Restart Bluetooth
+After=network.target
+
+[Service]
+ExecStart=/bin/sh -c ""/home/root/pw-coffee/bluetooth.sh"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

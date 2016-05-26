@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 rfkill block bluetooth
 rfkill unblock bluetooth
