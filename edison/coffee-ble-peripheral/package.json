@@ -1,5 +1,5 @@
 {
-  "name": "coffee",
+  "name": "coffee-peripheral",
   "dependencies": {
     "eddystone-beacon": "^1.0.6",
     "edison-io": "^0.9.4",

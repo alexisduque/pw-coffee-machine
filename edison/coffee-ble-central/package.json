@@ -1,0 +1,20 @@
+{
+  "name": "coffee-central",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "physical",
+    "web",
+    "beacons"
+  ],
+  "author": "Alexis DUQUE",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "1.1.3",
+    "noble": "^1.5.0",
+    "node-notifier": "4.6.0"
+  }
+}
