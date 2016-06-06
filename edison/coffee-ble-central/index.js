@@ -4,7 +4,7 @@ var urldecode = require('./urldecode.js');
 var metadata = require('./metadata.js');
 noble.on('stateChange', function (state) {
   if (state === 'poweredOn') {
-    noble.startScanning(['feaa']);
+    noble.startScanning(['feaa'], true);
   } else {
     noble.stopScanning();
   }
@@ -19,6 +19,7 @@ noble.on('scanStop', function () {
 });
 noble.on('discover', function (peripheral) {
   var serviceData = peripheral.advertisement.serviceData;
+  console.log(chalk.dim('Device found: ' + peripheral.advertisement.localName));
   if (serviceData && serviceData.length) {
     var objects = [];
     for (var i in serviceData) {
