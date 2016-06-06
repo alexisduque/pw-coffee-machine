@@ -1,28 +1,22 @@
-'use strict';
-var http = require('http'),
-  chalk = require('chalk'),
-  notifier = require('node-notifier');
-
-module.exports = function(urldata)  {
-  var urls = JSON.stringify({'objects': urldata}),
-    headers = {
+var http = require('http');
+var chalk = require('chalk');
+var notifier = require('node-notifier');
+module.exports = function (urldata) {
+  var urls = JSON.stringify({ 'objects': urldata }), headers = {
       'Content-Type': 'application/json',
       'Content-Length': urls.length
-    },
-    options = {
+    }, options = {
       'host': 'service.physical-web.org',
       'port': 80,
       'path': '/resolve-scan',
       'method': 'POST',
       'headers': headers
-    },
-    urlOnly = function() {
+    }, urlOnly = function () {
       var data = JSON.parse(urls);
       for (var i in data.objects) {
         if (data.objects.hasOwnProperty(i)) {
           console.log(chalk.underline.bgBlue(' ' + data.objects[i].url + ' '));
           console.log(data.objects[i].url);
-
           notifier.notify({
             'title': data.objects[i].url,
             'message': data.objects[i].url,
@@ -33,17 +27,13 @@ module.exports = function(urldata)  {
           });
         }
       }
-    },
-    req = http.request(options, function(res) {
+    }, req = http.request(options, function (res) {
       res.setEncoding('utf-8');
-
       var responseString = '';
-
-      res.on('data', function(data) {
+      res.on('data', function (data) {
         responseString += data;
       });
-
-      res.on('end', function() {
+      res.on('end', function () {
         try {
           var response = JSON.parse(responseString);
           for (var i in response.metadata) {
@@ -53,7 +43,6 @@ module.exports = function(urldata)  {
               console.log(chalk.gray(data.description));
               console.log(data.displayUrl);
               console.log();
-
               notifier.notify({
                 'title': data.title,
                 'subtitle': data.displayUrl,
@@ -73,13 +62,11 @@ module.exports = function(urldata)  {
         }
       });
     });
-
-  req.on('error', function(e) {
+  req.on('error', function (e) {
     console.log(e);
     console.log();
     urlOnly();
   });
-
   req.write(urls);
   req.end();
 };

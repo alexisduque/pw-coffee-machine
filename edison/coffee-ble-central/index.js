@@ -2,26 +2,22 @@ var noble = require('noble');
 var chalk = require('chalk');
 var urldecode = require('./urldecode.js');
 var metadata = require('./metadata.js');
-
-noble.on('stateChange', function(state) {
+noble.on('stateChange', function (state) {
   if (state === 'poweredOn') {
     noble.startScanning(['feaa']);
   } else {
     noble.stopScanning();
   }
 });
-
-noble.on('scanStart', function() {
+noble.on('scanStart', function () {
   console.log(chalk.dim('Scan started...'));
   console.log();
 });
-
-noble.on('scanStop', function() {
+noble.on('scanStop', function () {
   console.log(chalk.dim('Scan stopped...'));
   console.log();
 });
-
-noble.on('discover', function(peripheral) {
+noble.on('discover', function (peripheral) {
   var serviceData = peripheral.advertisement.serviceData;
   if (serviceData && serviceData.length) {
     var objects = [];
@@ -29,7 +25,7 @@ noble.on('discover', function(peripheral) {
       // check if Eddystone-URL
       if (serviceData[i].data.toString('hex').substr(0, 2) === '10') {
         var url = urldecode(serviceData[i].data.toString('hex'));
-        objects.push({'url': url});
+        objects.push({ 'url': url });
       }
     }
     if (objects.length) {

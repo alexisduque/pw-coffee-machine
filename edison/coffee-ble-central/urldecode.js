@@ -1,8 +1,5 @@
-'use strict';
-module.exports = function(serviceData) {
-  var buf = new Buffer(serviceData, 'hex'),
-    url = '';
-
+module.exports = function (serviceData) {
+  var buf = new Buffer(serviceData, 'hex'), url = '';
   for (var i = 2; i < buf.length; i += 1) {
     // check for URI prefix
     if (i === 2 && buf[i] >= 0 && buf[i] <= 3) {
