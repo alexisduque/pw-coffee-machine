@@ -5,13 +5,17 @@ var eddystone = require('eddystone-beacon');
 var five = require('johnny-five');
 var Edison = require('edison-io');
 var led = '';
+var relay = '';
 var board = new five.Board({ io: new Edison() });
 board.on('ready', function () {
   led = new five.Led('J19-6');
+  relay = new five.Relay('J19-10');
+  relay.off();
   led.on();
 });
 board.on('warn', function () {
   led.off();
+  relay.off();
 });
 var name = 'PW_Coffee';
 var url = 'https://goo.gl/TWmm3H';

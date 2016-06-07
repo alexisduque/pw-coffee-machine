@@ -2,6 +2,21 @@ var noble = require('noble');
 var chalk = require('chalk');
 var urldecode = require('./urldecode.js');
 var metadata = require('./metadata.js');
+var Edison = require('edison-io');
+var led = '';
+var timer = '';
+var relay = '';
+var board = new five.Board({ io: new Edison() });
+board.on('ready', function () {
+  led = new five.Led('J19-6');
+  relay = new five.Relay('J19-10');
+  relay.off();
+  led.on();
+});
+board.on('warn', function () {
+  led.off();
+  relay.off();
+});
 noble.on('stateChange', function (state) {
   if (state === 'poweredOn') {
     noble.startScanning(['feaa'], true);
@@ -12,10 +27,13 @@ noble.on('stateChange', function (state) {
 noble.on('scanStart', function () {
   console.log(chalk.dim('Scan started...'));
   console.log();
+  led.off();
+  led.blink();
 });
 noble.on('scanStop', function () {
   console.log(chalk.dim('Scan stopped...'));
   console.log();
+  led.stop();
 });
 noble.on('discover', function (peripheral) {
   var serviceData = peripheral.advertisement.serviceData;
@@ -31,6 +49,7 @@ noble.on('discover', function (peripheral) {
     }
     if (objects.length) {
       metadata(objects);
+      relay.on();
     }
   }
 });
