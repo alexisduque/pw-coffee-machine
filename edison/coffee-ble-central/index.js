@@ -10,6 +10,7 @@ var brewScheduled = false;
 var brewDuration = 60;
 var resetInterval = 5 * 60;
 if (process.env.TEST !== '1') {
+  var five = require('johnny-five');
   var Edison = require('edison-io');
   var board = new five.Board({ io: new Edison() });
   board.on('ready', function () {
@@ -20,6 +21,7 @@ if (process.env.TEST !== '1') {
   });
   board.on('warn', function () {
     led.off();
+    led.stop();
     relay.off();
   });
 } else {
