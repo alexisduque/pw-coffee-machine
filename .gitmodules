@@ -1,0 +1,3 @@
+[submodule "beacon"]
+	path = beacon
+	url = git@github.com:alexisduque/pw-beacon.git
