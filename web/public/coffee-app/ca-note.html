@@ -1,0 +1,199 @@
+<link rel="import" href="/bower_components/paper-styles/shadow.html">
+<link rel="import" href="/bower_components/paper-styles/typography.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-toggle-button/paper-toggle-button.html">
+<dom-module id="ca-note">
+  <template>
+    <style>
+      paper-toggle-button.blue {
+        --paper-toggle-button-checked-bar-color:  var(--paper-orange-500);
+        --paper-toggle-button-checked-button-color:  var(--paper-orange-500);
+        --paper-toggle-button-checked-ink-color: var(--paper-orange-500);
+        --paper-toggle-button-unchecked-bar-color:  var(--paper-blue-600);
+        --paper-toggle-button-unchecked-button-color:  var(--paper-blue-600);
+        --paper-toggle-button-unchecked-ink-color: var(--paper-blue-600);
+      }
+      :host {
+        display: block;
+        box-sizing: border-box;
+        background-color: #fafafa;
+        color: #212121;
+        padding: 1em;
+        @apply(--paper-font-common-base);
+        @apply(--shadow-elevation-2dp);
+        border-radius: 2px;
+      }
+
+      .hidden {
+        display: none;
+      }
+      .flex {
+         @apply(--layout-horizontal);
+      }
+      .flexchild {
+        @apply(--layout-flex);
+      }
+      .flex2child {
+        @apply(--layout-flex-2);
+      }
+      .flex3child {
+        @apply(--layout-flex-3);
+      }
+      h1 {
+        font-size: 1.15em;
+        margin: 0;
+        white-space: pre-wrap;
+      }
+
+      h1:not(.hidden)+p {
+        margin-top: 1em;
+      }
+
+      p {
+        margin: 0;
+        font-family: 'Roboto Slab', Times New Roman, serif;
+        font-size: 0.9em;
+        white-space: pre-wrap;
+      }
+
+      .placeholder:after {
+        content: 'Add a coffee scheduling';
+        opacity: 0.5;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .empty {
+        font-style: italic;
+        color: #737373;
+        line-height: 0;
+        pointer-events: none;
+      }
+    </style>
+    <h1
+        id="title"
+        class$="[[emptyClass(title, editable)]]"
+        contenteditable$="[[editable]]"></h1>
+    <p
+        id="body"
+        class$="[[emptyClass(body, editable)]]"
+        contenteditable$="[[editable]]"></p>
+
+    <paper-dropdown-menu label="Your favourite taste">
+      <paper-listbox class="dropdown-content" id="taste" selected="{{taste}}">
+        <paper-item>Ristreto</paper-item>
+        <paper-item>Espresso</paper-item>
+        <paper-item>Long</paper-item>
+        <paper-item>American</paper-item>
+        <paper-item>Largo</paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu>
+
+    <paper-input readonly="[[!editable]]" id="cup" value="{{ cup }}" label=" Number of cups" type="number">
+      <iron-icon icon="maps:local-cafe" prefix> </iron-icon>
+    </paper-input>
+    <br>
+    <div class="container flex">
+        <paper-toggle-button readonly="[[!editable]]" id="hot" checked="{{ hot }}" class="blue flex3child">
+          Keep hot
+        </paper-toggle-button>
+        <paper-input readonly="[[!editable]]" label="Duration (min)" value="{{ hotDuration }}" type="number" id="hot-duration">
+          <iron-icon icon="icons:query-builder" prefix> min</iron-icon>
+        </paper-input>
+    </div>
+    <br>
+    <paper-toggle-button readonly="[[!editable]]" id="pw-enabled" checked="{{ pwEnabled }}" class="blue">
+      Physical Web enabled
+    </paper-toggle-button>
+    <br>
+    <p id="url"><b>URL</b>	https://goo.gl/hSle9o</p>
+  </template>
+  <script>
+    Polymer({
+      is: 'ca-note',
+
+      properties: {
+        editable: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+        title: {
+          type: String,
+          notify: true,
+          value: 'Your coffee machine configuration',
+        },
+        cup: {
+          notify: true,
+          type: Number
+        },
+        hot: {
+          notify: true,
+          type: Boolean,
+        },
+        taste: {
+          type: String,
+          notify: true,
+        },
+        pwEnabled: {
+          type: Boolean,
+          notify: true,
+        },
+        hotDuration: {
+          notify: true,
+          type: String,
+        },
+        body: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        lastUpdated: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      listeners: {
+        input: 'onInput'
+      },
+
+      observers: [
+        'updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste)'
+      ],
+
+      emptyClass(content, editable) {
+        if (editable) {
+          return !content ? 'placeholder' : '';
+        } else {
+          return !content ? 'hidden' : '';
+        }
+      },
+
+      propertiesAreEmpty() {
+        for (var i = 0; i < arguments.length; ++i) {
+          if (arguments[i]) {
+            return false;
+          }
+        }
+        return true;
+      },
+
+      updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste) {
+        console.log(arguments);
+        this.$.title.textContent = title;
+        this.$.body.textContent = body;
+      },
+
+      onInput() {
+        this.async(function() {
+          this.title = this.$.title.innerText;
+          this.body = this.$.body.innerText;
+        });
+      }
+    })
+  </script>
+</dom-module>

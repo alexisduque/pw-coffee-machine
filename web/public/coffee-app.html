@@ -1,0 +1,120 @@
+
+<link rel="import" href="coffee-app/ca-elements.html">
+<link rel="import" href="bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="coffee-app">
+  <template>
+    <style include="coffee-app-shared-styles"></style>
+    <ca-toolbar signed-in="[[signedIn]]" user="{{user}}" on-sign-out="signOut">
+    </ca-toolbar>
+    <ca-login
+        on-sign-in="signIn"
+        signed-in="[[signedIn]]"
+        disabled="[[!online]]">
+    </ca-login>
+    <firebase-auth
+      id="auth"
+      app-name="physical-web-coffee"
+      provider="google",
+      signed-in="{{signedIn}}"
+      user="{{user}}">
+    </firebase-auth>
+    <paper-fab
+      icon="add"
+      on-tap="create"
+      disabled="[[!online]]"
+      aria-label="Add note">
+    </paper-fab>
+    <ca-editor
+      id="editor"
+      note="{{editableNote}}"
+      on-close="commitChange">
+    </ca-editor>
+    <firebase-document
+      id="document"
+      app-name="physical-web-coffee"
+      path="[[editableNoteId]]"
+      data="{{editableNote}}">
+    </firebase-document>
+    <firebase-query
+      id="query"
+      app-name="physical-web-coffee"
+      path="/coffee/[[user.uid]]"
+      data="{{notes}}">
+    </firebase-query>
+    <app-indexeddb-mirror
+        session="[[user.uid]]"
+        key="notes"
+        id="indexdb"
+        data="{{notes}}"
+        persisted-data="{{persistedNotes}}">
+    </app-indexeddb-mirror>
+    <div class="notes">
+      <template id="notes" is="dom-repeat" items="[[persistedNotes]]" as="note">
+        <ca-note
+          id$="[[note.$key]]"
+          title="[[note.title]]"
+          cup="[[note.cup]]"
+          user="{{user.uid}}"
+          body="[[note.body]]"
+          hot="[[note.hot]]"
+          taste="[[note.taste]]"
+          hot-duration="[[note.hotDuration]]"
+          pw-enabled="[[note.pwEnabled]]"
+          on-tap="edit">
+        </ca-note>
+      </template>
+    </div>
+    <paper-dialog
+        entry-animation="scale-up-animation"
+        exit-animation="fade-out-animation" id="dialog">
+      <h2>Welcome</h2>
+      <paper-dialog-scrollable>
+       You haven't yet setup your Physical Web Coffee Machine.
+        Click on <b>Create</b> to start !
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="create">Create</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'coffee-app',
+      behaviors: [Polymer.CoffeeAppBehavior],
+      ready: function() {
+        this.async(this.onNotesChange, 2000);
+        this.async(function(){
+          this.listen(this.$.notes, 'dom-change', 'onNotesChange');
+        }, 5000);
+      },
+      signIn: function() {
+        this.$.auth.signInWithPopup();
+      },
+      get notesPath() {
+        return '/coffee/' + this.user.uid;
+      },
+      toEditableId: function(noteId) {
+        return this.notesPath + '/' + noteId;
+      },
+      onNotesChange: function() {
+        console.log('dom change: ' + this.persistedNotes);
+        if (this.$.indexdb.persistedData.length == 0
+           && this.signedIn
+            && this.online) {
+          this.$.dialog.open();
+        } else {
+          this.$.dialog.close();
+        }
+      },
+      get isEditable() {
+        return this.online;
+      }
+    });
+  </script>
+</dom-module>
