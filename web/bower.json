@@ -24,6 +24,7 @@
     "paper-listbox": "polymerelements/paper-listbox#^1.1.2",
     "iron-behaviors": "polymerelements/iron-behaviors#^1.0.16",
     "paper-dialog": "PolymerElements/paper-dialog#^1.0.4",
-    "neon-animation": "PolymerElements/neon-animation#^1.2.3"
+    "neon-animation": "PolymerElements/neon-animation#^1.2.3",
+    "google-url-shortener": "GoogleWebComponents/google-url-shortener#^1.0.1"
   }
 }

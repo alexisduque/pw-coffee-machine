@@ -24,6 +24,9 @@
         @apply(--shadow-elevation-2dp);
         border-radius: 2px;
       }
+      .error {
+        color: red;
+      }
 
       .hidden {
         display: none;
@@ -109,12 +112,11 @@
       Physical Web enabled
     </paper-toggle-button>
     <br>
-    <p id="url"><b>URL</b>	https://goo.gl/hSle9o</p>
+    <p hidden="[[editable]]"id="shortUrl"><b>URL </b> [[ urlShort ]]</p>
   </template>
   <script>
     Polymer({
       is: 'ca-note',
-
       properties: {
         editable: {
           type: Boolean,
@@ -154,7 +156,7 @@
         lastUpdated: {
           type: Number,
           value: 0
-        }
+        },
       },
 
       listeners: {

@@ -5,6 +5,9 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="bower_components/neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="/bower_components/google-url-shortener/google-url-shortener.html">
+<link rel="import" href="/bower_components/google-apis/google-js-api.html">
+
 
 <dom-module id="coffee-app">
   <template>
@@ -63,6 +66,7 @@
           body="[[note.body]]"
           hot="[[note.hot]]"
           taste="[[note.taste]]"
+          url-short="[[urlShort]]"
           hot-duration="[[note.hotDuration]]"
           pw-enabled="[[note.pwEnabled]]"
           on-tap="edit">
@@ -82,16 +86,48 @@
         <paper-button dialog-confirm autofocus on-tap="create">Create</paper-button>
       </div>
     </paper-dialog>
-  </template>
+    <google-client-loader id="shortener"
+      name="urlshortener"
+      version="v1"></google-client-loader>
+    <google-url-shortener id="shortener"
+          long-url="{{longUrl}}"
+          short-url="{{shortUrl}}"
+          error="{{urlError}}"
+          auto>
+    </google-url-shortener>
+    </template>
   <script>
     Polymer({
       is: 'coffee-app',
       behaviors: [Polymer.CoffeeAppBehavior],
       ready: function() {
+        var shortener = document.getElementById('shortener');
+        shortener.addEventListener('google-api-load', function(event) {
+          var request = shortener.api.url.list({
+             //url: 'https://google.fr'
+          });
+          request.execute(function(resp) {
+            console.log(resp);
+          });
+        });
         this.async(this.onNotesChange, 2000);
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
+        this.$.shortener.addEventListener('google-url-shorten', function(event) {
+          console.log(event.detail.shortUrl);
+          this.urlShort = event.detail.shortUrl;
+
+        }.bind(this));
+        this.$.shortener.addEventListener('google-url-shorten-error', function(event) {
+          console.log(event.detail);
+          this.urlShort = event.detail.error;
+        }.bind(this));
+
+        this.$.shortener.addEventListener('google-url-shortener-ready', function(event) {
+          this.longUrl = document.URL;
+          this.shorten();
+        });
       },
       signIn: function() {
         this.$.auth.signInWithPopup();
