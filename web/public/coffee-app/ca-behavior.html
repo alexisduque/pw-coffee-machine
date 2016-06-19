@@ -15,6 +15,10 @@
         return '';
       },
 
+      get urlPath() {
+        return '';
+      },
+
       get isEditable() {
         return true;
       },
@@ -73,6 +77,31 @@
         }
 
         return Promise.resolve();
+      },
+
+      saveUrl() {
+        return this.$.urldocument.save(this.urlPath, 'url').then(() => {
+          //this.$.urldocument.reset();
+        });
+      },
+
+      commitUrl(event) {
+        var changeCommits;
+
+        switch (event.detail) {
+          case 'save':
+            changeCommits = this.saveUrl();
+            break;
+          default:
+            changeCommits = Promise.resolve();
+            break;
+        }
+
+        if (this.$.urlquery && this.$.urlquery.refresh) {
+          changeCommits.then(() => {
+            this.$.urlquery.refresh();
+          });
+        }
       },
 
       delete() {

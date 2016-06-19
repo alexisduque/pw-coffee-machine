@@ -1,13 +1,12 @@
 
 <link rel="import" href="coffee-app/ca-elements.html">
-<link rel="import" href="bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
-<link rel="import" href="bower_components/polymerfire/polymerfire.html">
-<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="bower_components/neon-animation/animations/scale-up-animation.html">
-<link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="/bower_components/google-url-shortener/google-url-shortener.html">
-<link rel="import" href="/bower_components/google-apis/google-js-api.html">
-
+<link rel="import" href="./bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="./bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="./bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="./bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="./bower_components/google-apis/google-js-api.html">
+<link rel="import" href="./bower_components/google-url-shortener/google-url-shortener.html">
 
 <dom-module id="coffee-app">
   <template>
@@ -43,11 +42,23 @@
       path="[[editableNoteId]]"
       data="{{editableNote}}">
     </firebase-document>
+    <firebase-document
+      id="urldocument"
+      app-name="physical-web-coffee"
+      path="[[user.uid]]/url"
+      data="{{shortUrl}}">
+    </firebase-document>
+    <firebase-query
+      id="urlquery"
+      app-name="physical-web-coffee"
+      path="[[user.uid]]">
+    </firebase-query>
     <firebase-query
       id="query"
       app-name="physical-web-coffee"
-      path="/coffee/[[user.uid]]"
+      path="[[user.uid]]/coffee"
       data="{{notes}}">
+    </firebase-query>
     </firebase-query>
     <app-indexeddb-mirror
         session="[[user.uid]]"
@@ -55,6 +66,13 @@
         id="indexdb"
         data="{{notes}}"
         persisted-data="{{persistedNotes}}">
+    </app-indexeddb-mirror>
+    <app-indexeddb-mirror
+        session="[[user.uid]]"
+        key="url"
+        id="urlindexdb"
+        data="{{shortUrl}}"
+        persisted-data="{{persistedUrl}}">
     </app-indexeddb-mirror>
     <div class="notes">
       <template id="notes" is="dom-repeat" items="[[persistedNotes]]" as="note">
@@ -69,6 +87,7 @@
           url-short="[[urlShort]]"
           hot-duration="[[note.hotDuration]]"
           pw-enabled="[[note.pwEnabled]]"
+          short-url="[[persistedUrl.value]]"
           on-tap="edit">
         </ca-note>
       </template>
@@ -88,55 +107,83 @@
     </paper-dialog>
     <google-client-loader id="shortener"
       name="urlshortener"
-      version="v1"></google-client-loader>
-    <google-url-shortener id="shortener"
-          long-url="{{longUrl}}"
-          short-url="{{shortUrl}}"
-          error="{{urlError}}"
-          auto>
-    </google-url-shortener>
-    </template>
+      version="v1">
+    </google-client-loader>
+  </template>
   <script>
     Polymer({
       is: 'coffee-app',
       behaviors: [Polymer.CoffeeAppBehavior],
+      properties: {
+        user: {
+           type: Object,
+           observer: '__userChanged'
+         },
+        shortUrl: {
+          type: Object,
+          notify: true,
+          observer: '__urlChanged'
+        }
+      },
+      listeners: {
+        'need-short-url': 'apiAuth'
+      },
       ready: function() {
-        var shortener = document.getElementById('shortener');
-        shortener.addEventListener('google-api-load', function(event) {
-          var request = shortener.api.url.list({
-             //url: 'https://google.fr'
-          });
-          request.execute(function(resp) {
-            console.log(resp);
-          });
-        });
-        this.async(this.onNotesChange, 2000);
+        this.async(this.onNotesChange, 4000);
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
-        this.$.shortener.addEventListener('google-url-shorten', function(event) {
-          console.log(event.detail.shortUrl);
-          this.urlShort = event.detail.shortUrl;
-
-        }.bind(this));
-        this.$.shortener.addEventListener('google-url-shorten-error', function(event) {
-          console.log(event.detail);
-          this.urlShort = event.detail.error;
-        }.bind(this));
-
-        this.$.shortener.addEventListener('google-url-shortener-ready', function(event) {
-          this.longUrl = document.URL;
-          this.shorten();
+      },
+      __userChanged: function() {
+        if(this.user) {
+        this.$.urlquery.query.once('value')
+          .then(function(dataSnapshot) {
+            console.log(dataSnapshot.child('url').val())
+            if (!dataSnapshot.child('url').exists()) {
+              this.fire('need-short-url');
+            }
+          }.bind(this));
+        }
+      },
+      __urlChanged: function() {
+        if(this.shortUrl) {
+          console.log(this.shortUrl);
+        }
+      },
+      apiAuth: function(event) {
+        var shortener = this.$.shortener;
+        var request = shortener.api.url.insert({
+          longUrl: this.longUrl
         });
+        var config = {
+          'client_id': '364434817376-pqq5r1kf2pan6po1bs6vf8s99klh20fb.apps.googleusercontent.com',
+          'scope': 'https://www.googleapis.com/auth/urlshortener',
+          'pompt': 'none',
+          'immediate': true,
+        };
+        shortener.auth.authorize(config, function() {
+          request.execute(function(resp) {
+            this.shortUrl = {value: resp.id };
+            this.saveUrl();
+          }.bind(this));
+        }.bind(this));
       },
       signIn: function() {
-        this.$.auth.signInWithPopup();
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/urlshortener');
+        this.$.auth.signInWithPopup(provider);
       },
       get notesPath() {
-        return '/coffee/' + this.user.uid;
+        return '/' + this.user.uid + '/coffee';
+      },
+      get urlPath() {
+        return '/' + this.user.uid;
       },
       toEditableId: function(noteId) {
         return this.notesPath + '/' + noteId;
+      },
+      toUrlId: function(urlId) {
+        return this.urlPath + '/url';
       },
       onNotesChange: function() {
         console.log('dom change: ' + this.persistedNotes);
@@ -150,6 +197,9 @@
       },
       get isEditable() {
         return this.online;
+      },
+      get longUrl() {
+        return 'https://physical-web-coffee.firebaseio.com' + this.notesPath + '.json';
       }
     });
   </script>
