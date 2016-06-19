@@ -9,7 +9,7 @@ var resetMachine = {};
 var relay = {};
 var brewScheduled = false;
 var brewDuration = 60;
-var resetInterval = 5 * 60;
+var resetInterval = 50 * 60;
 var objects = [];
 if (process.env.TEST !== '1') {
   var five = require('johnny-five');
@@ -77,28 +77,36 @@ noble.on('discover', function (peripheral) {
         var object = { 'url': url };
       }
     }
-    if ((objects.length && objects[0].url != object.url) ||( object && !objects.length)) {
-      objects[0] = object;
+    if (object && !objects.length && !brewScheduled) {
+      objects.push(object);
       userdata(objects[0]).then(function(data) {
-        console.log(chalk.underline.bgGreen('Coffee is brewing !'));
-        brewScheduled = true;
-        relay.on();
-        brew = new Promise(function (resolve, reject) {
-          setTimeout(resolve, brewDuration * 1000);
-        });
-        resetMachine = new Promise(function (resolve, reject) {
-          setTimeout(resolve, resetInterval * 1000);
-        });
-        brew.then(function () {
-          console.log(chalk.underline.bgGreen('Coffee Ready !'));
-          relay.off();
-          return reset;
-        });
-        resetMachine.then(function () {
-          console.log(chalk.underline.bgYellow('Machine reset'));
-          brewScheduled = false;
-        })
+        if (data.pwEnabled) {
+          console.log(chalk.underline.bgGreen('Coffee is brewing !'));
+          brewScheduled = true;
+          keepHot = data.hot ? data.hotDuration * 60 : 0;
+          brewDuration = data.cup * 180 + keepHot;
+          relay.on();
+          brew = new Promise(function (resolve, reject) {
+            setTimeout(resolve, brewDuration * 1000);
+          });
+          resetMachine = new Promise(function (resolve, reject) {
+            setTimeout(resolve, resetInterval * 1000);
+          });
+          brew.then(function () {
+            console.log(chalk.underline.bgGreen('Coffee Ready !'));
+            relay.off();
+            return reset;
+          });
+          resetMachine.then(function () {
+            console.log(chalk.underline.bgYellow('Machine reset'));
+            brewScheduled = false;
+            objects.pop();
+          })
+        } else {
+          objects.pop();
+        }
       }).catch(function (e) {
+        objects.pop();
         console.log(chalk.underline.bgRed('Error: ' + e));
         console.log();
       });

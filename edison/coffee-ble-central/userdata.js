@@ -34,6 +34,8 @@ module.exports = function (urldata) {
               console.log(chalk.underline.bgBlue(' ' + data.title + ' '));
               console.log(chalk.underline.bgGreen('Hot:') + ' ' + data.hotDuration);
               console.log(chalk.underline.bgGreen('Taste:') + ' ' + data.taste);
+              console.log(chalk.underline.bgGreen('PW Enabled:') + ' ' + data.pwEnabled);
+              console.log(chalk.underline.bgGreen('Cup:') + ' ' + data.cup);
               console.log();
               deferred.resolve(data);
             } else {
