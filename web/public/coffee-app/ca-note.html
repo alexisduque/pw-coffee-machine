@@ -100,10 +100,11 @@
     </paper-input>
     <br>
     <div class="container flex">
-        <paper-toggle-button readonly="[[!editable]]" id="hot" checked="{{ hot }}" class="blue flex3child">
+        <paper-toggle-button readonly="[[!editable]]" id="hot" checked="{{ hot }}" class="blue flexchild">
           Keep hot
         </paper-toggle-button>
-        <paper-input readonly="[[!editable]]" label="Duration (min)" value="{{ hotDuration }}" type="number" id="hot-duration">
+        <paper-input readonly="[[!editable]]" label="Duration (min)"
+        class="flexchild" value="{{ hotDuration }}" type="number" id="hot-duration">
           <iron-icon icon="icons:query-builder" prefix> min</iron-icon>
         </paper-input>
     </div>
