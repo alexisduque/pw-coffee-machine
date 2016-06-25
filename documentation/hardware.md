@@ -17,12 +17,14 @@ The Intel Edison Breakout board exposes Edison GPIOs to the bottom of the board.
 
 We will use **J20-2** (3.3V) **J19-3** (GND) **J19-6** (GPIO 48 - LED) **J19-10** (GPIO 40 - Relay).
 
+![Edison Breakout Boad with soldered hearders](./images/edison-headers-small.png)
+
 As next step, you'll see that the 1.8V logical levels from the Edison are too small to light an LED or to pilot the relay module. Without level shifting, the Edison has 1.8V voltage levels.
 
 To solve this problem you may use a transistor. That what we will do in step 3.
 The schematic looks as below:
 
-![](./images/trans-sch.png)
+![Transistor schematic](./images/trans-sch.png)
 
 ## Step 2 : Disasemble the machine power block
 
