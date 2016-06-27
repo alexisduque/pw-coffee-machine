@@ -10,6 +10,9 @@
           notify: true
         }
       },
+      listeners: {
+        'drawer': 'drawer'
+      },
 
       get notesPath() {
         return '';
@@ -115,6 +118,12 @@
       signOut() {
         if (this.$.auth) {
           this.$.auth.signOut();
+        }
+      },
+
+      drawer() {
+        if (this.$.drawer) {
+          this.$.drawer.togglePanel();
         }
       }
     };

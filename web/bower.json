@@ -25,6 +25,10 @@
     "iron-behaviors": "polymerelements/iron-behaviors#^1.0.16",
     "paper-dialog": "PolymerElements/paper-dialog#^1.0.4",
     "neon-animation": "PolymerElements/neon-animation#^1.2.3",
-    "google-url-shortener": "GoogleWebComponents/google-url-shortener#^1.0.1"
+    "google-url-shortener": "GoogleWebComponents/google-url-shortener#^1.0.1",
+    "app-layout": "PolymerElements/app-layout#^0.9.1",
+    "paper-drawer-panel": "PolymerElements/paper-drawer-panel#^1.0.9",
+    "paper-badge": "PolymerElements/paper-badge#^1.1.2",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.5"
   }
 }

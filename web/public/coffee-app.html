@@ -2,96 +2,117 @@
 <link rel="import" href="coffee-app/ca-elements.html">
 <link rel="import" href="./bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="./bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="./bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="./bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="./bower_components/neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="./bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="./bower_components/google-apis/google-js-api.html">
 <link rel="import" href="./bower_components/google-url-shortener/google-url-shortener.html">
+<link rel="import" href="./bower_components/paper-drawer-panel/paper-drawer-panel.html">
 
 <dom-module id="coffee-app">
   <template>
     <style include="coffee-app-shared-styles"></style>
-    <ca-toolbar signed-in="[[signedIn]]" user="{{user}}" on-sign-out="signOut">
-    </ca-toolbar>
-    <ca-login
-        on-sign-in="signIn"
-        signed-in="[[signedIn]]"
-        disabled="[[!online]]">
-    </ca-login>
-    <firebase-auth
-      id="auth"
-      app-name="physical-web-coffee"
-      provider="google",
-      signed-in="{{signedIn}}"
-      user="{{user}}">
-    </firebase-auth>
-    <paper-fab
-      icon="add"
-      on-tap="create"
-      disabled="[[!online]]"
-      aria-label="Add note">
-    </paper-fab>
-    <ca-editor
-      id="editor"
-      note="{{editableNote}}"
-      on-close="commitChange">
-    </ca-editor>
-    <firebase-document
-      id="document"
-      app-name="physical-web-coffee"
-      path="[[editableNoteId]]"
-      data="{{editableNote}}">
-    </firebase-document>
-    <firebase-document
-      id="urldocument"
-      app-name="physical-web-coffee"
-      path="[[user.uid]]/url"
-      data="{{shortUrl}}">
-    </firebase-document>
-    <firebase-query
-      id="urlquery"
-      app-name="physical-web-coffee"
-      path="[[user.uid]]">
-    </firebase-query>
-    <firebase-query
-      id="query"
-      app-name="physical-web-coffee"
-      path="[[user.uid]]/coffee"
-      data="{{notes}}">
-    </firebase-query>
-    </firebase-query>
-    <app-indexeddb-mirror
-        session="[[user.uid]]"
-        key="notes"
-        id="indexdb"
-        data="{{notes}}"
-        persisted-data="{{persistedNotes}}">
-    </app-indexeddb-mirror>
-    <app-indexeddb-mirror
-        session="[[user.uid]]"
-        key="url"
-        id="urlindexdb"
-        data="{{shortUrl}}"
-        persisted-data="{{persistedUrl}}">
-    </app-indexeddb-mirror>
-    <div class="notes">
-      <template id="notes" is="dom-repeat" items="[[persistedNotes]]" as="note">
-        <ca-note
-          id$="[[note.$key]]"
-          title="[[note.title]]"
-          cup="[[note.cup]]"
-          user="{{user.uid}}"
-          body="[[note.body]]"
-          hot="[[note.hot]]"
-          taste="[[note.taste]]"
-          url-short="[[urlShort]]"
-          hot-duration="[[note.hotDuration]]"
-          pw-enabled="[[note.pwEnabled]]"
-          short-url="[[persistedUrl.value]]"
-          on-tap="edit">
-        </ca-note>
-      </template>
-    </div>
+    <style is="custom-style">
+      paper-toolbar.pending {
+        --paper-toolbar-background: var(--google-grey-100);
+        --paper-toolbar-height: 52px;
+        --paper-toolbar-title: {
+          font-style: italic;
+          font-weight: bold;
+        };
+      }
+    </style>
+    <paper-drawer-panel id="drawer" force-narrow>
+      <paper-header-panel drawer>
+        <paper-toolbar class="pending"></paper-toolbar>
+        <div></div>
+      </paper-header-panel>
+      <div main>
+      <ca-toolbar signed-in="[[signedIn]]" user="{{user}}" on-sign-out="signOut">
+      </ca-toolbar>
+      <ca-login
+          on-sign-in="signIn"
+          signed-in="[[signedIn]]"
+          disabled="[[!online]]">
+      </ca-login>
+      <firebase-auth
+        id="auth"
+        app-name="physical-web-coffee"
+        provider="google",
+        signed-in="{{signedIn}}"
+        user="{{user}}">
+      </firebase-auth>
+      <paper-fab
+        icon="add"
+        on-tap="create"
+        disabled="[[!online]]"
+        aria-label="Add note">
+      </paper-fab>
+      <ca-editor
+        id="editor"
+        note="{{editableNote}}"
+        on-close="commitChange">
+      </ca-editor>
+      <firebase-document
+        id="document"
+        app-name="physical-web-coffee"
+        path="[[editableNoteId]]"
+        data="{{editableNote}}">
+      </firebase-document>
+      <firebase-document
+        id="urldocument"
+        app-name="physical-web-coffee"
+        path="[[user.uid]]/url"
+        data="{{shortUrl}}">
+      </firebase-document>
+      <firebase-query
+        id="urlquery"
+        app-name="physical-web-coffee"
+        path="[[user.uid]]">
+      </firebase-query>
+      <firebase-query
+        id="query"
+        app-name="physical-web-coffee"
+        path="[[user.uid]]/coffee"
+        data="{{notes}}">
+      </firebase-query>
+      </firebase-query>
+      <app-indexeddb-mirror
+          session="[[user.uid]]"
+          key="notes"
+          id="indexdb"
+          data="{{notes}}"
+          persisted-data="{{persistedNotes}}">
+      </app-indexeddb-mirror>
+      <app-indexeddb-mirror
+          session="[[user.uid]]"
+          key="url"
+          id="urlindexdb"
+          data="{{shortUrl}}"
+          persisted-data="{{persistedUrl}}">
+      </app-indexeddb-mirror>
+      <div class="notes">
+        <template id="notes" is="dom-repeat" items="[[persistedNotes]]" as="note">
+          <ca-note
+            id$="[[note.$key]]"
+            title="[[note.title]]"
+            cup="[[note.cup]]"
+            user="{{user.uid}}"
+            body="[[note.body]]"
+            hot="[[note.hot]]"
+            taste="[[note.taste]]"
+            url-short="[[urlShort]]"
+            hot-duration="[[note.hotDuration]]"
+            pw-enabled="[[note.pwEnabled]]"
+            short-url="[[persistedUrl.value]]"
+            on-tap="edit">
+          </ca-note>
+        </template>
+      </div>
+      </div>
+    </paper-drawer-panel>
+
     <paper-dialog
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation" id="dialog">
@@ -126,7 +147,7 @@
         }
       },
       listeners: {
-        'need-short-url': 'apiAuth'
+        'need-short-url': 'apiAuth',
       },
       ready: function() {
         this.async(this.onNotesChange, 4000);
