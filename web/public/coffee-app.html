@@ -17,15 +17,20 @@
       paper-toolbar.pending {
         --paper-toolbar-background: var(--google-grey-100);
         --paper-toolbar-height: 52px;
+        --paper-toolbar-color: black;
         --paper-toolbar-title: {
-          font-style: italic;
           font-weight: bold;
+          margin-left: 0;
+          font-size: 1em;
         };
-      }
+      }      }
     </style>
     <paper-drawer-panel id="drawer" force-narrow>
       <paper-header-panel drawer>
-        <paper-toolbar class="pending"></paper-toolbar>
+        <paper-toolbar class="pending">
+            <span class="title">Pending Coffee</span>
+            <iron-icon icon="alarm"></iron-icon>
+        </paper-toolbar>
         <div></div>
       </paper-header-panel>
       <div main>
