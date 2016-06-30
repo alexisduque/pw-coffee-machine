@@ -37,7 +37,13 @@ It should looks like the next picture :
 
 ## Step 3 : Wire the machine to the Relay
 
-TODO
+Cut the phase wire, which is the brown one in the Step 2 picture.
+Then, connect each end to the relay module, as in the next picture. The relay module will act as a switch, you can control with the Edison board.
+
+Note that you may need to extend the wire length to place the relay module with more convenience.
+
+![](./images/relay-pw.png)
+
 
 ## Step4 : Wire the circuit
 
