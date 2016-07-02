@@ -29,6 +29,7 @@
     "app-layout": "PolymerElements/app-layout#^0.9.1",
     "paper-drawer-panel": "PolymerElements/paper-drawer-panel#^1.0.9",
     "paper-badge": "PolymerElements/paper-badge#^1.1.2",
-    "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.5"
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.5",
+    "paper-card": "PolymerElements/paper-card#^1.1.1"
   }
 }

@@ -53,7 +53,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <iron-icon icon="maps:local-cafe" id="pending" on-tap="drawer"></iron-icon>
-    <paper-badge for="pending" label="4" class="orange">
+    <paper-badge hidden$="[[!signedIn]]" for="pending" label="[[pending.length]]">
     </paper-badge>
     <h1>Physical Web Coffee Machine Configuration</h1>
     <iron-icon icon="cloud" hidden$="[[!online]]"></iron-icon>
@@ -92,6 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log('click');
         this.fire('drawer');
       }
+      
     });
   </script>
 </dom-module>

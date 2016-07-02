@@ -1,0 +1,64 @@
+<link rel="import" href="/bower_components/paper-styles/shadow.html">
+<link rel="import" href="/bower_components/paper-styles/typography.html">
+<link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="/bower_components/polymerfire/polymerfire.html">
+<dom-module id="ca-pending">
+  <template>
+    <style>
+        paper-toolbar.pending {
+          --paper-toolbar-background: var(--google-grey-100);
+          --paper-toolbar-height: 52px;
+          --paper-toolbar-color: black;
+          --paper-toolbar-title: {
+            font-weight: bold;
+            margin-left: 0;
+            font-size: 1em;
+          };
+        }
+        .pending-list {
+            text-align: center;
+            margin: 10px;
+        }
+        paper-card {
+            display: list-item;
+            padding: 5px;
+        }
+        </style>
+    <paper-header-panel>
+      <paper-toolbar class="pending">
+          <span class="title">Pending Coffee</span>
+          <iron-icon icon="alarm"></iron-icon>
+      </paper-toolbar>
+      <div class="pending-list">
+        <template id="pending" is="dom-repeat" items="[[pending]]" as="coffee">
+          <paper-card heading="[[coffee.type]]" id$="[[coffee.$key]]">
+              <div class="card-content">[[coffee.date]]</div>
+              [[coffee.user]]
+          </paper-card>
+        </template>
+      </div>
+    </paper-header-panel>
+  </template>
+  <script>
+    Polymer({
+      is: 'ca-pending',
+      properties: {
+        user: {
+          type: Object,
+        },
+        pending: {
+          type: Object,
+        }
+      },
+
+      listeners: {
+      },
+      observers: [
+      ],
+
+    })
+  </script>
+</dom-module>
