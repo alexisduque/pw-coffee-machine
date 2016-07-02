@@ -1,8 +1,8 @@
 var noble = require('noble');
 var chalk = require('chalk');
 var urldecode = require('./urldecode.js');
-var metadata = require('./metadata.js');
 var userdata = require('./userdata.js');
+var pending = require('./pending.js');
 var led = {};
 var brew = {};
 var resetMachine = {};
@@ -11,7 +11,14 @@ var brewScheduled = false;
 var brewDuration = 60;
 var resetInterval = 50 * 60;
 var objects = [];
+var scheduledCoffee = [];
+var data =  {
+  hotDuration: 10,
+  cup: 2,
+  taste: 'Espresso'
+};
 if (process.env.TEST !== '1') {
+  pending(data);
   var five = require('johnny-five');
   var Edison = require('edison-io');
   var board = new five.Board({ io: new Edison() });
@@ -46,6 +53,7 @@ if (process.env.TEST !== '1') {
     console.log(chalk.underline.bgRed('Relay OFF !'));
   };
 }
+
 noble.on('stateChange', function (state) {
   if (state === 'poweredOn') {
     noble.startScanning(['fed8'], true);
@@ -82,6 +90,9 @@ noble.on('discover', function (peripheral) {
       userdata(objects[0]).then(function(data) {
         if (data.pwEnabled) {
           console.log(chalk.underline.bgGreen('Coffee is brewing !'));
+          pending(data).then(function(data) {
+            scheduledCoffee.push(data);
+          });
           brewScheduled = true;
           keepHot = data.hot ? data.hotDuration * 60 : 0;
           brewDuration = data.cup * 180 + keepHot;
