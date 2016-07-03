@@ -23,19 +23,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         bottom: 0;
         z-index: 1;
       }
-
+      
       :host([opened]) {
         display: block;
       }
-
+      
       :host(.open) {
         background-color: var(--paper-blue-500);
       }
-
+      
       paper-button {
         color: var(--paper-blue-50);
       }
-
+      
       #background {
         display: block;
         position: absolute;
@@ -47,21 +47,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: var(--paper-blue-500);
         transform-origin: 128px 128px;
       }
-
+      
       ca-note {
         display: block;
         position: absolute;
         top: 0px;
         left: 0px;
       }
-
+      
       :host(.open) ca-note {
         position: relative;
         margin: auto;
         width: calc(100vw - 20px);
         max-width: 480px;
       }
-
+      
       .controls {
         display: block;
         position: relative;
@@ -74,21 +74,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transition: opacity 0.3s;
         opacity: 0;
       }
-
+      
       :host(.open) .controls {
         opacity: 1;
       }
     </style>
     <div id="background"></div>
-    <ca-note id="note" title="{{note.title}}" body="{{note.body}}"
-        hot="{{note.hot}}"
-        cup="{{note.cup}}"
-        taste="{{note.taste}}"
-        hot-duration="{{note.hotDuration}}"
-        pw-enabled="{{note.pwEnabled}}"
-        body="{{note.body}}"
-        editable>
-      </ca-note>
+    <ca-note id="note" title="{{note.title}}" body="{{note.body}}" hot="{{note.hot}}" cup="{{note.cup}}" taste="{{note.taste}}" hot-duration="{{note.hotDuration}}" pw-enabled="{{note.pwEnabled}}" body="{{note.body}}" editable>
+    </ca-note>
     <div class="controls">
       <paper-button on-tap="delete">Delete</paper-button>
       <paper-button on-tap="save">Done</paper-button>
@@ -125,7 +118,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       create() {
         this._setOpened(true);
-        this.note = { title: 'Your coffee machine configuration', body: '', pwEnabled: true, cup: 10, hot:true, taste:2, hotDuration: 20 };
+        this.note = {
+          title: 'Your coffee machine configuration',
+          body: '',
+          pwEnabled: true,
+          cup: 10,
+          hot: true,
+          taste: 2,
+          hotDuration: 20
+        };
         this.transitionInFrom(this.getBoundingClientRect());
       },
 
@@ -143,7 +144,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.__editedNoteElement = null;
         }
 
-        this.fire('close', detail, { bubbles: false });
+        this.fire('close', detail, {
+          bubbles: false
+        });
         this.transitionOut().then(() => {
           Polymer.dom(this).classList.remove('open');
           this._setOpened(false);
@@ -153,9 +156,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       transitionInFrom(rect) {
         var targetRect = this.getBoundingClientRect();
         var targetLeft = targetRect.width > 500 ?
-            targetRect.width / 2 - 240 : 10;
+          targetRect.width / 2 - 240 : 10;
         var targetWidth = targetRect.width > 500 ?
-            '480px' : 'calc(100vw - 20px)'
+          '480px' : 'calc(100vw - 20px)'
         var noteAnimation = this.$.note.animate([{
           transform: `translate(${rect.left}px,${rect.top - 46}px)`,
           width: `${rect.width}px`,

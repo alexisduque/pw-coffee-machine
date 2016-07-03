@@ -7,13 +7,14 @@
   <template>
     <style>
       paper-toggle-button.blue {
-        --paper-toggle-button-checked-bar-color:  var(--paper-orange-500);
-        --paper-toggle-button-checked-button-color:  var(--paper-orange-500);
+        --paper-toggle-button-checked-bar-color: var(--paper-orange-500);
+        --paper-toggle-button-checked-button-color: var(--paper-orange-500);
         --paper-toggle-button-checked-ink-color: var(--paper-orange-500);
-        --paper-toggle-button-unchecked-bar-color:  var(--paper-blue-600);
-        --paper-toggle-button-unchecked-button-color:  var(--paper-blue-600);
+        --paper-toggle-button-unchecked-bar-color: var(--paper-blue-600);
+        --paper-toggle-button-unchecked-button-color: var(--paper-blue-600);
         --paper-toggle-button-unchecked-ink-color: var(--paper-blue-600);
       }
+
       :host {
         display: block;
         box-sizing: border-box;
@@ -24,6 +25,7 @@
         @apply(--shadow-elevation-2dp);
         border-radius: 2px;
       }
+
       .error {
         color: red;
       }
@@ -31,18 +33,23 @@
       .hidden {
         display: none;
       }
+
       .flex {
-         @apply(--layout-horizontal);
+        @apply(--layout-horizontal);
       }
+
       .flexchild {
         @apply(--layout-flex);
       }
+
       .flex2child {
         @apply(--layout-flex-2);
       }
+
       .flex3child {
         @apply(--layout-flex-3);
       }
+
       h1 {
         font-size: 1.15em;
         margin: 0;
@@ -76,14 +83,8 @@
         pointer-events: none;
       }
     </style>
-    <h1
-        id="title"
-        class$="[[emptyClass(title, editable)]]"
-        contenteditable$="[[editable]]"></h1>
-    <p
-        id="body"
-        class$="[[emptyClass(body, editable)]]"
-        contenteditable$="[[editable]]"></p>
+    <h1 id="title" class$="[[emptyClass(title, editable)]]" contenteditable$="[[editable]]"></h1>
+    <p id="body" class$="[[emptyClass(body, editable)]]" contenteditable$="[[editable]]"></p>
 
     <paper-dropdown-menu label="Your favourite taste">
       <paper-listbox class="dropdown-content" id="taste" selected="{{taste}}">
@@ -100,13 +101,12 @@
     </paper-input>
     <br>
     <div class="container flex">
-        <paper-toggle-button readonly="[[!editable]]" id="hot" checked="{{ hot }}" class="blue flexchild">
-          Keep hot
-        </paper-toggle-button>
-        <paper-input readonly="[[!editable]]" label="Duration (min)"
-        class="flexchild" value="{{ hotDuration }}" type="number" id="hot-duration">
-          <iron-icon icon="icons:query-builder" prefix> min</iron-icon>
-        </paper-input>
+      <paper-toggle-button readonly="[[!editable]]" id="hot" checked="{{ hot }}" class="blue flexchild">
+        Keep hot
+      </paper-toggle-button>
+      <paper-input readonly="[[!editable]]" label="Duration (min)" class="flexchild" value="{{ hotDuration }}" type="number" id="hot-duration">
+        <iron-icon icon="icons:query-builder" prefix> min</iron-icon>
+      </paper-input>
     </div>
     <br>
     <paper-toggle-button readonly="[[!editable]]" id="pw-enabled" checked="{{ pwEnabled }}" class="blue">

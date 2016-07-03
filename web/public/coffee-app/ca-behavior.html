@@ -72,8 +72,8 @@
 
       save() {
         if (this.$.document.isNew &&
-            (this.editableNote.title ||
-             this.editableNote.body)) {
+          (this.editableNote.title ||
+            this.editableNote.body)) {
           return this.$.document.save(this.notesPath).then(() => {
             this.$.document.reset();
           });
@@ -120,12 +120,6 @@
           this.$.auth.signOut();
         }
       },
-
-      drawer() {
-        if (this.$.drawer) {
-          this.$.drawer.togglePanel();
-        }
-      }
     };
 
     Polymer.CoffeeAppBehavior = [

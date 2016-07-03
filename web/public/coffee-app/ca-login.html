@@ -24,17 +24,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
         color: var(--paper-blue-50);
-
         @apply(--layout);
         @apply(--layout-center-center);
       }
-
+      
       :host([signed-in]) {
         opacity: 0;
         pointer-events: none;
       }
-
-      paper-button > * {
+      
+      paper-button> * {
         vertical-align: middle;
         text-transform: none;
       }
@@ -63,7 +62,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       signIn: function() {
-        this.fire('sign-in', null, { bubbles: false });
+        this.fire('sign-in', null, {
+          bubbles: false
+        });
       }
     });
   </script>

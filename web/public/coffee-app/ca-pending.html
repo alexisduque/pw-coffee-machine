@@ -8,35 +8,72 @@
 <dom-module id="ca-pending">
   <template>
     <style>
-        paper-toolbar.pending {
-          --paper-toolbar-background: var(--google-grey-100);
-          --paper-toolbar-height: 52px;
-          --paper-toolbar-color: black;
-          --paper-toolbar-title: {
-            font-weight: bold;
-            margin-left: 0;
-            font-size: 1em;
-          };
+      paper-toolbar.pending {
+        --paper-toolbar-background: var(--google-grey-100);
+        --paper-toolbar-height: 52px;
+        --paper-toolbar-color: black;
+        --paper-toolbar-title: {
+          font-weight: bold;
+          margin-left: 0;
+          font-size: 1em;
         }
-        .pending-list {
-            text-align: center;
-            margin: 10px;
-        }
-        paper-card {
-            display: list-item;
-            padding: 5px;
-        }
-        </style>
+      }
+
+      .pending-list {
+        text-align: center;
+        margin: 10px;
+      }
+
+      paper-card {
+        display: list-item;
+        padding: 5px;
+      }
+      paper-card.pending {
+        @apply(--layout-horizontal);
+      }
+      .pending-image {
+        width: 120px;
+        height: 170px;
+        background: url('../images/espresso.jpg');
+        background-size: cover;
+      }
+      .pending-content {
+        @apply(--layout-flex);
+        float: right;
+      }
+      .pending-header {
+        @apply(--paper-font-headline);
+      }
+      .pending-name {
+        color: var(--paper-grey-600);
+        margin: 10px 0;
+      }
+
+      paper-icon-button.pending-icon {
+        --iron-icon-fill-color: white;
+        --iron-icon-stroke-color: var(--paper-grey-600);
+      }
+
+    </style>
     <paper-header-panel>
       <paper-toolbar class="pending">
-          <span class="title">Pending Coffee</span>
-          <iron-icon icon="alarm"></iron-icon>
+        <span class="title">Pending Coffee</span>
+        <iron-icon icon="alarm"></iron-icon>
       </paper-toolbar>
       <div class="pending-list">
         <template id="pending" is="dom-repeat" items="[[pending]]" as="coffee">
-          <paper-card heading="[[coffee.type]]" id$="[[coffee.$key]]">
-              <div class="card-content">[[coffee.date]]</div>
-              [[coffee.user]]
+          <paper-card id$="[[coffee.$key]]" class="pending">
+            <div class="pending-content">
+              <div class="card-content">
+                <div class="pending-header">Espresso</div>
+                <div class="pending-name">[[coffee.user]]</div>
+                <div>[[ getDate(coffee.date) ]]</div>
+              </div>
+              <div class="pending-actions">
+                <iron-icon icon="alarm"></iron-icon>
+              </div>
+            </div>
+            <div class="pending-image"></div>
           </paper-card>
         </template>
       </div>
@@ -47,17 +84,19 @@
       is: 'ca-pending',
       properties: {
         user: {
-          type: Object,
+          type: Object
         },
         pending: {
-          type: Object,
+          type: Object
         }
       },
 
-      listeners: {
-      },
-      observers: [
-      ],
+      listeners: {},
+      observers: [],
+
+      getDate(date) {
+        return new Date(date).toLocaleTimeString();
+      }
 
     })
   </script>

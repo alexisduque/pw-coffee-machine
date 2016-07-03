@@ -25,8 +25,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 6px 8px;
         --paper-icon-button-disabled: {
           color: var(--paper-blue-50);
-        };
+        }
       }
+
       .orange {
         --paper-badge-background: var(--paper-orange-500);
       }
@@ -46,7 +47,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         paper-icon-button {
           margin-right: 1.5em;
         }
-
         iron-icon:first-child {
           margin-left: 1em;
         }
@@ -58,10 +58,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <h1>Physical Web Coffee Machine Configuration</h1>
     <iron-icon icon="cloud" hidden$="[[!online]]"></iron-icon>
     <iron-icon icon="cloud-off" hidden$="[[online]]"></iron-icon>
-    <paper-icon-button
-        icon="[[computeLockIcon(signedIn)]]"
-        disabled="[[!signedIn]]"
-        on-tap="lock">
+    <paper-icon-button icon="[[computeLockIcon(signedIn)]]" disabled="[[!signedIn]]" on-tap="lock">
     </paper-icon-button>
   </template>
   <script>
@@ -89,10 +86,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       drawer: function() {
-        console.log('click');
-        this.fire('drawer');
+        if (this.signedIn) {
+          console.log('click');
+          this.fire('drawer');
+        }
       }
-      
+
     });
   </script>
 </dom-module>

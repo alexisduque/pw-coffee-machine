@@ -10,14 +10,16 @@
 <link rel="import" href="./bower_components/google-apis/google-js-api.html">
 <link rel="import" href="./bower_components/google-url-shortener/google-url-shortener.html">
 <link rel="import" href="./bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="bower_components/platinum-push-messaging/platinum-push-messaging.html">
 
 <dom-module id="coffee-app">
   <template>
     <style include="coffee-app-shared-styles"></style>
-    <paper-drawer-panel id="drawer" force-narrow>
+    <paper-drawer-panel id="drawer"
+      disable-swipe="[[!signedIn]]" force-narrow>
       <ca-pending drawer
-          user="[[user]]"
-          pending=[[pending]]>
+         user="[[user]]"
+         pending=[[pending]]>
       </ca-pending>
       <div main>
         <ca-toolbar
@@ -26,9 +28,9 @@
           user="{{user}}" on-sign-out="signOut">
         </ca-toolbar>
         <ca-login
-            on-sign-in="signIn"
-            signed-in="[[signedIn]]"
-            disabled="[[!online]]">
+          on-sign-in="signIn"
+          signed-in="[[signedIn]]"
+          disabled="[[!online]]">
         </ca-login>
         <firebase-auth
           id="auth"
@@ -49,17 +51,17 @@
           on-close="commitChange">
         </ca-editor>
         <firebase-query
-            id="pending-query"
-            app-name="physical-web-coffee"
-            path="pending"
-            data="{{pending}}">
+          id="pending-query"
+          app-name="physical-web-coffee"
+          path="pending"
+          data="{{pending}}">
         </firebase-query>
         <app-indexeddb-mirror
-            key="pending"
-            session="[[user.uid]]"
-            id="pending-indexdb"
-            data="{{pending}}"
-            persisted-data="{{persistedPending}}">
+          key="pending"
+          session="[[user.uid]]"
+          id="pending-indexdb"
+          data="{{pending}}"
+          persisted-data="{{persistedPending}}">
         </app-indexeddb-mirror>
         <firebase-document
           id="document"
@@ -86,18 +88,11 @@
         </firebase-query>
         </firebase-query>
         <app-indexeddb-mirror
-            session="[[user.uid]]"
-            key="notes"
-            id="indexdb"
-            data="{{notes}}"
-            persisted-data="{{persistedNotes}}">
-        </app-indexeddb-mirror>
-        <app-indexeddb-mirror
-            session="[[user.uid]]"
-            key="url"
-            id="urlindexdb"
-            data="{{shortUrl}}"
-            persisted-data="{{persistedUrl}}">
+          session="[[user.uid]]"
+          key="notes"
+          id="indexdb"
+          data="{{notes}}"
+          persisted-data="{{persistedNotes}}">
         </app-indexeddb-mirror>
         <div class="notes">
           <template id="notes" is="dom-repeat" items="[[persistedNotes]]" as="note">
@@ -107,12 +102,13 @@
               cup="[[note.cup]]"
               user="{{user.uid}}"
               body="[[note.body]]"
+              notify="[[notify]]"
               hot="[[note.hot]]"
               taste="[[note.taste]]"
               url-short="[[urlShort]]"
               hot-duration="[[note.hotDuration]]"
               pw-enabled="[[note.pwEnabled]]"
-              short-url="[[persistedUrl.value]]"
+              short-url="[[shortUrl.value]]"
               on-tap="edit">
             </ca-note>
           </template>
@@ -121,8 +117,9 @@
     </paper-drawer-panel>
 
     <paper-dialog
-        entry-animation="scale-up-animation"
-        exit-animation="fade-out-animation" id="dialog">
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation"
+      id="dialog">
       <h2>Welcome</h2>
       <paper-dialog-scrollable>
        You haven't yet setup your Physical Web Coffee Machine.
@@ -137,6 +134,11 @@
       name="urlshortener"
       version="v1">
     </google-client-loader>
+    <platinum-push-messaging id="push"
+      title="Coffee Ready"
+      message="Your coffee is ready !"
+      icon-url="images/icon-1x.png">
+    </platinum-push-messaging>
   </template>
   <script>
     Polymer({
@@ -161,6 +163,8 @@
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
+        this.$.push.enable();
+        //this.$.push.testPush("Hello");
       },
       __userChanged: function() {
         if(this.user) {
@@ -212,6 +216,9 @@
       },
       toUrlId: function(urlId) {
         return this.urlPath + '/url';
+      },
+      get notify(){
+        return this.$.push.enabled;
       },
       onNotesChange: function() {
         console.log('dom change: ' + this.persistedNotes);

@@ -41,5 +41,7 @@
     "sizes": "192x192",
     "type": "image/png",
     "density": 4.0
-  }]
+  }],
+  "gcm_sender_id": "AIzaSyAWDMsntK7Cgjn_ctA7rX5suse1fR66l9s",
+  "permissions": ["gcm"]
 }
