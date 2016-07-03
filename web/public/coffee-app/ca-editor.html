@@ -23,19 +23,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         bottom: 0;
         z-index: 1;
       }
-      
+
       :host([opened]) {
         display: block;
       }
-      
+
       :host(.open) {
         background-color: var(--paper-blue-500);
       }
-      
+
       paper-button {
         color: var(--paper-blue-50);
       }
-      
+
       #background {
         display: block;
         position: absolute;
@@ -47,21 +47,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: var(--paper-blue-500);
         transform-origin: 128px 128px;
       }
-      
+
       ca-note {
         display: block;
         position: absolute;
         top: 0px;
         left: 0px;
       }
-      
+
       :host(.open) ca-note {
         position: relative;
         margin: auto;
         width: calc(100vw - 20px);
         max-width: 480px;
       }
-      
+
       .controls {
         display: block;
         position: relative;
@@ -74,13 +74,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transition: opacity 0.3s;
         opacity: 0;
       }
-      
+
       :host(.open) .controls {
         opacity: 1;
       }
     </style>
     <div id="background"></div>
-    <ca-note id="note" title="{{note.title}}" body="{{note.body}}" hot="{{note.hot}}" cup="{{note.cup}}" taste="{{note.taste}}" hot-duration="{{note.hotDuration}}" pw-enabled="{{note.pwEnabled}}" body="{{note.body}}" editable>
+    <ca-note id="note" title="{{note.title}}" body="{{note.body}}" hot="{{note.hot}}" cup="{{note.cup}}" taste="{{note.taste}}" hot-duration="{{note.hotDuration}}" pw-enabled="{{note.pwEnabled}}" body="{{note.body}}" user="[[user]]"  editable>
     </ca-note>
     <div class="controls">
       <paper-button on-tap="delete">Delete</paper-button>
@@ -124,6 +124,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           pwEnabled: true,
           cup: 10,
           hot: true,
+          user: this.user,
           taste: 2,
           hotDuration: 20
         };

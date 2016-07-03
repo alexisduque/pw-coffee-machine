@@ -48,6 +48,7 @@
         <ca-editor
           id="editor"
           note="{{editableNote}}"
+          user="[[user.displayName]]"
           on-close="commitChange">
         </ca-editor>
         <firebase-query
@@ -100,9 +101,7 @@
               id$="[[note.$key]]"
               title="[[note.title]]"
               cup="[[note.cup]]"
-              user="{{user.uid}}"
               body="[[note.body]]"
-              notify="[[notify]]"
               hot="[[note.hot]]"
               taste="[[note.taste]]"
               url-short="[[urlShort]]"
