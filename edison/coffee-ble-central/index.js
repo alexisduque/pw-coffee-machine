@@ -2,7 +2,8 @@ var noble = require('noble');
 var chalk = require('chalk');
 var urldecode = require('./urldecode.js');
 var userdata = require('./userdata.js');
-var pending = require('./pending.js');
+var schedule = require('./schedule.js');
+var notify = require('./notify.js');
 var led = {};
 var brew = {};
 var resetMachine = {};
@@ -18,7 +19,6 @@ var data =  {
   taste: 'Espresso'
 };
 if (process.env.TEST !== '1') {
-  pending(data);
   var five = require('johnny-five');
   var Edison = require('edison-io');
   var board = new five.Board({ io: new Edison() });
@@ -34,6 +34,8 @@ if (process.env.TEST !== '1') {
     relay.off();
   });
 } else {
+  // notify('-KLknPTAzP1H5g9dEeB4').then(function(data) {});
+  // schedule(data);
   led.off = function () {
     console.log(chalk.underline.bgRed('LED OFF !'));
   };
@@ -92,6 +94,8 @@ noble.on('discover', function (peripheral) {
           console.log(chalk.underline.bgGreen('Coffee is brewing !'));
           pending(data).then(function(data) {
             scheduledCoffee.push(data);
+            notify(data).then(function(data) {
+            });
           });
           brewScheduled = true;
           keepHot = data.hot ? data.hotDuration * 60 : 0;
@@ -106,6 +110,10 @@ noble.on('discover', function (peripheral) {
           brew.then(function () {
             console.log(chalk.underline.bgGreen('Coffee Ready !'));
             relay.off();
+            var coffeeId = scheduledCoffee.shift();
+            notify(coffeeId).then(function(data) {
+              scheduledCoffee.push(data);
+            });
             return reset;
           });
           resetMachine.then(function () {
