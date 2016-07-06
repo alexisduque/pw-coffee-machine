@@ -152,11 +152,17 @@
           type: Object,
           notify: true,
           observer: '__urlChanged'
+        },
+        pending: {
+          type: Array,
         }
       },
       listeners: {
         'need-short-url': 'apiAuth',
       },
+      observers: [
+        '__pendingChanged(pending.splices)'
+      ],
       ready: function() {
         this.async(this.onNotesChange, 4000);
         this.async(function(){
@@ -181,6 +187,26 @@
           console.log(this.shortUrl);
         }
       },
+      __pendingChanged: function(changeRecord) {
+        if (changeRecord) {
+          var auth = document.getElementById('auth');
+          var push = document.getElementById('push');
+          changeRecord.indexSplices.forEach(function(s) {
+            s.removed.forEach(function(pending) {
+              console.log(pending.user + ' was removed');
+              if (pending.user === auth.user.displayName) {
+                push.testPush('Coffee Ready');
+              }
+            });
+            for (var i=0; i<s.addedCount; i++) {
+              var index = s.index + i;
+              var newUser = s.object[index];
+              console.log('User ' + newUser.user + ' added at index ' + index);
+            }
+          }, this);
+        }
+      },
+
       apiAuth: function(event) {
         var shortener = this.$.shortener;
         var request = shortener.api.url.insert({

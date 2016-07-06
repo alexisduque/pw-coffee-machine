@@ -88,6 +88,12 @@
         });
       },
 
+      drawer() {
+         if (this.$.drawer) {
+           this.$.drawer.togglePanel();
+         }
+      },
+
       commitUrl(event) {
         var changeCommits;
 
