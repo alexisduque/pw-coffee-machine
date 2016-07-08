@@ -1,5 +1,8 @@
 var noble = require('noble');
 var chalk = require('chalk');
+var FCM = require('fcm-push');
+var serverKey = 'AIzaSyDkgbBA2Hc1U94c0cssPhO3v0Qj_KABQPs';
+var fcm = new FCM(serverKey);
 var urldecode = require('./urldecode.js');
 var userdata = require('./userdata.js');
 var schedule = require('./schedule.js');
@@ -36,6 +39,16 @@ if (process.env.TEST !== '1') {
 } else {
   // notify('-KLknPTAzP1H5g9dEeB4').then(function(data) {});
   // schedule(data);
+  var message = {
+      to: 'dpEsYqVCNkM:APA91bFJf6T0izwbcUiNGSnIiJgY_eGZjLLG3rxF_zGo3QWE2v2BGB1QXbjQUnxfVpzvwh7aYM0TvdmBch90k5r9pDX1nyutmgtpHFRCwm8TRvfD1VMuaIAFOw4VeiT6VgSQ-53qvPag', // required
+  };
+  fcm.send(message, function(err, response){
+      if (err) {
+          console.log("Something has gone wrong!");
+      } else {
+          console.log("Successfully sent with response: ", response);
+      }
+  });
   led.off = function () {
     console.log(chalk.underline.bgRed('LED OFF !'));
   };
