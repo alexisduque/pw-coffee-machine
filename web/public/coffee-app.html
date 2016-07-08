@@ -87,6 +87,12 @@
           path="[[user.uid]]/coffee"
           data="{{notes}}">
         </firebase-query>
+        <firebase-document
+          id="pushdocument"
+          app-name="physical-web-coffee"
+          path="[[user.uid]]/subscription/[[subscription.endpoint]]"
+          data="[[subscription.endpoint]]">
+        </firebase-query>
         </firebase-query>
         <app-indexeddb-mirror
           session="[[user.uid]]"
@@ -136,6 +142,7 @@
     <platinum-push-messaging id="push"
       title="Coffee Ready"
       message="Your coffee is ready !"
+      subscription="[[subscription]]"
       icon-url="images/icon-1x.png">
     </platinum-push-messaging>
   </template>
@@ -147,7 +154,7 @@
         user: {
            type: Object,
            observer: '__userChanged'
-         },
+        },
         shortUrl: {
           type: Object,
           notify: true,
@@ -155,36 +162,45 @@
         },
         pending: {
           type: Array,
+        },
+        subscription: {
+          type: Object,
         }
       },
       listeners: {
         'need-short-url': 'apiAuth',
       },
       observers: [
-        '__pendingChanged(pending.splices)'
+        '__pendingChanged(pending.splices)',
+        '__subscriptionChange(subscription)'
       ],
       ready: function() {
+        this.subscribePush();
         this.async(this.onNotesChange, 4000);
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
-        this.$.push.enable();
         //this.$.push.testPush("Hello");
       },
       __userChanged: function() {
         if(this.user) {
-        this.$.urlquery.query.once('value')
-          .then(function(dataSnapshot) {
-            console.log(dataSnapshot.child('url').val())
-            if (!dataSnapshot.child('url').exists()) {
-              this.fire('need-short-url');
-            }
-          }.bind(this));
+          this.$.urlquery.query.once('value')
+            .then(function(dataSnapshot) {
+              console.log(dataSnapshot.child('url').val())
+              if (!dataSnapshot.child('url').exists()) {
+                this.fire('need-short-url');
+              }
+            }.bind(this));
         }
       },
       __urlChanged: function() {
         if(this.shortUrl) {
           console.log(this.shortUrl);
+        }
+      },
+      __subscriptionChange: function(newVal, oldVal) {
+        if (newVal.endpoint) {
+          console.log('subscription: ' + newVal.endpoint);
         }
       },
       __pendingChanged: function(changeRecord) {
@@ -244,6 +260,18 @@
       },
       get notify(){
         return this.$.push.enabled;
+      },
+      subscribePush: function() {
+        navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+          serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
+            .then(function(pushSubscription) {
+              //Store this subscription on application server
+              console.log(pushSubscription);
+            })
+            .catch(function(e) {
+              console.error('Unable to register push subscription', e);
+            });
+        });
       },
       onNotesChange: function() {
         console.log('dom change: ' + this.persistedNotes);

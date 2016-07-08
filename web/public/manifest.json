@@ -42,6 +42,7 @@
     "type": "image/png",
     "density": 4.0
   }],
-  "gcm_sender_id": "AIzaSyAWDMsntK7Cgjn_ctA7rX5suse1fR66l9s",
-  "permissions": ["gcm"]
+  "gcm_sender_id": "364434817376",
+  "gcm_user_visible_only": true,
+  "permissions": ["gcm", "notifications"]
 }

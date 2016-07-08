@@ -165,7 +165,8 @@
       },
 
       observers: [
-        'updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste)'
+        'updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste)',
+        'requestPermission(pwEnabled)'
       ],
 
       emptyClass(content, editable) {
@@ -183,6 +184,50 @@
           }
         }
         return true;
+      },
+
+      requestPermission(newVal, oldVal) {
+        if (!this.editable) return;
+        var auth = document.getElementById('auth');
+        var push = document.getElementById('push');
+        if (!auth || !push) return;
+        if (newVal === true) {
+          Notification.requestPermission().then(function(result) {
+            if (result === 'denied') {
+              console.log('Permission wasn\'t granted. Allow a retry.');
+              return;
+            }
+            if (result === 'default') {
+              console.log('The permission request was dismissed.');
+              return;
+            }
+            var push = document.getElementById('push');
+            console.log('Permissions: '+ result);
+            push.enable().then(() => {
+              var auth = document.getElementById('auth');
+              var push = document.getElementById('push');
+              if (auth.user.uid) {
+                var myDate = new Date();
+                var myApp = document.getElementById('app');
+                if (push.subscription) {
+                  var endpoint = push.subscription.endpoint.split('send/')[1];
+                  myApp.app.database().ref(auth.user.uid + '/subscription/' + endpoint).set({
+                    date: myDate.toLocaleString(),
+                  })
+                  .catch((resp) => { console.log(resp)});
+                }
+              }
+            });
+          });
+        } else if (newVal === false && push.subscription) {
+          var push = document.getElementById('push');
+          var auth = document.getElementById('auth');
+          var myApp = document.getElementById('app');
+          var endpoint = push.subscription.endpoint.split('send/')[1];
+          myApp.app.database().ref(auth.user.uid + '/subscription/' + endpoint).set(null)
+            .catch((resp) => { console.log(resp)});
+          push.disable();
+        }
       },
 
       updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste) {

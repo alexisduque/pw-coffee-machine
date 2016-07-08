@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Physical Web Coffee Machine</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <!-- Older Chrome configuration -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -27,7 +27,7 @@
         <platinum-sw-cache cache-config-file="cache-config.json" default-cache-strategy="networkFirst">
         </platinum-sw-cache>
     </platinum-sw-register>
-    <firebase-app name="physical-web-coffee" api-key="AIzaSyChGmvN9MgYmLBIH8pjvRGEKz0xPV0xvQY" auth-domain="physical-web-coffee.firebaseapp.com" database-url="https://physical-web-coffee.firebaseio.com">
+    <firebase-app id="app" name="physical-web-coffee" api-key="AIzaSyChGmvN9MgYmLBIH8pjvRGEKz0xPV0xvQY" auth-domain="physical-web-coffee.firebaseapp.com" database-url="https://physical-web-coffee.firebaseio.com">
         <coffee-app></coffee-app>
     </firebase-app>
 </body>
