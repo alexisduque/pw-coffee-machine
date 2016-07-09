@@ -42,7 +42,7 @@
         <paper-fab
           icon="add"
           on-tap="create"
-          disabled="[[!online]]"
+          disabled$="{{ _createDisabled() })"
           aria-label="Add note">
         </paper-fab>
         <ca-editor
@@ -108,6 +108,8 @@
               title="[[note.title]]"
               cup="[[note.cup]]"
               body="[[note.body]]"
+              sugar="[[note.sugar]]"
+              milk="[[note.milk]]"
               hot="[[note.hot]]"
               taste="[[note.taste]]"
               url-short="[[urlShort]]"
@@ -153,12 +155,12 @@
       properties: {
         user: {
            type: Object,
-           observer: '__userChanged'
+           observer: '_userChanged'
         },
         shortUrl: {
           type: Object,
           notify: true,
-          observer: '__urlChanged'
+          observer: '_urlChanged'
         },
         pending: {
           type: Array,
@@ -171,18 +173,17 @@
         'need-short-url': 'apiAuth',
       },
       observers: [
-        '__pendingChanged(pending.splices)',
-        '__subscriptionChange(subscription)'
+        '_pendingChanged(pending.splices)',
+        '_subscriptionChange(subscription)'
       ],
       ready: function() {
         this.subscribePush();
-        this.async(this.onNotesChange, 4000);
+        this.async(this.onNotesChange, 5000);
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
-        //this.$.push.testPush("Hello");
       },
-      __userChanged: function() {
+      _userChanged: function() {
         if(this.user) {
           this.$.urlquery.query.once('value')
             .then(function(dataSnapshot) {
@@ -193,17 +194,17 @@
             }.bind(this));
         }
       },
-      __urlChanged: function() {
+      _urlChanged: function() {
         if(this.shortUrl) {
           console.log(this.shortUrl);
         }
       },
-      __subscriptionChange: function(newVal, oldVal) {
+      _subscriptionChange: function(newVal, oldVal) {
         if (newVal.endpoint) {
           console.log('subscription: ' + newVal.endpoint);
         }
       },
-      __pendingChanged: function(changeRecord) {
+      _pendingChanged: function(changeRecord) {
         if (changeRecord) {
           var auth = document.getElementById('auth');
           var push = document.getElementById('push');
@@ -272,6 +273,9 @@
               console.error('Unable to register push subscription', e);
             });
         });
+      },
+      _createDisabled: function() {
+        return (this.online && this.notes.length === 0)
       },
       onNotesChange: function() {
         console.log('dom change: ' + this.persistedNotes);
