@@ -228,6 +228,7 @@
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
+        this.dataOne();
       },
       _userChanged: function() {
         if(this.user) {
@@ -316,6 +317,39 @@
       },
       get notify(){
         return this.$.push.enabled;
+      },
+      dataOne: function(shortUrl){
+        var header = [0x03,0x03,0xD8,0xFE,0x13,0x16,0xD8,0xFE,0x00,0xEA,0x03]
+        var buffer = new ArrayBuffer(20);
+        var url = 'https://goo.gl/ZvXzjj';
+        url = url.substr(8);
+        console.log(url);
+        var dv = new DataView(buffer, 0)
+        var i = 0;
+        var j = 0;
+        header.forEach(function(val) {
+          dv.setUint8(i, val);
+          i++;
+        });
+        while(i<20 && j<url.length ) {
+          dv.setUint8(i, url.charCodeAt(j));
+          i++;
+          j++;
+        }
+        console.log(window.toHexString(dv));
+        var buffer2 = new ArrayBuffer(20);
+        var dv2 = new DataView(buffer2, 0)
+        i=0;
+        while(j<url.length && i<20) {
+          dv2.setUint8(i, url.charCodeAt(j));
+          i++;
+          j++;
+        }
+        var dataLength = url.length + 11;
+        var dv3 = new Uint8Array([dataLength]);
+        console.log(window.toHexString(dv2));
+        console.log('length: ' + dataLength);
+        return [dv, dv2, dv3]
       },
       subscribePush: function() {
         navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
