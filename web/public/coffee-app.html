@@ -287,7 +287,7 @@
         return this.online;
       },
       get longUrl() {
-        return 'https://physical-web-coffee.firebaseio.com' + this.notesPath + '.json';
+        return 'https://physical-web-coffee.firebaseio.com/' + this.user.uid + '.json';
       }
     });
   </script>
