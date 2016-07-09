@@ -10,7 +10,8 @@
 <link rel="import" href="./bower_components/google-apis/google-js-api.html">
 <link rel="import" href="./bower_components/google-url-shortener/google-url-shortener.html">
 <link rel="import" href="./bower_components/paper-drawer-panel/paper-drawer-panel.html">
-<link rel="import" href="bower_components/platinum-push-messaging/platinum-push-messaging.html">
+<link rel="import" href="./bower_components/platinum-push-messaging/platinum-push-messaging.html">
+<link rel="import" href="./bower_components/platinum-bluetooth/platinum-bluetooth-elements.html">
 
 <dom-module id="coffee-app">
   <template>
@@ -42,8 +43,16 @@
         <paper-fab
           icon="add"
           on-tap="create"
-          disabled$="{{ _createDisabled() })"
+          hidden$="[[_createDisabled(persistedNotes.*, user)]]"
           aria-label="Add note">
+        </paper-fab>
+        <paper-fab
+          id="bluetooth"
+          icon="settings-bluetooth"
+          on-click="connect"
+          class="bluetooth"
+          hidden$="[[_bluetoothDisabled(persistedNotes.*, user)]]"
+          aria-label="Configure Beacon">
         </paper-fab>
         <ca-editor
           id="editor"
@@ -147,8 +156,32 @@
       subscription="[[subscription]]"
       icon-url="images/icon-1x.png">
     </platinum-push-messaging>
+    <platinum-bluetooth-device id="bluetoothDevice"
+     services-filter='["b35d7da6-eed4-4d59-8f89-f6573edea967"]'
+     optional-services-filter="['b35d7da6-eed4-4d59-8f89-f6573edea967']">
+      <platinum-bluetooth-service service='b35d7da6-eed4-4d59-8f89-f6573edea967'>
+        <platinum-bluetooth-characteristic id="charDataOne" characteristic='b35d7da7-eed4-4d59-8f89-f6573edea967'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id="charDataTwo" characteristic='b35d7da8-eed4-4d59-8f89-f6573edea967'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id="charDataLength" characteristic='b35d7da9-eed4-4d59-8f89-f6573edea967'>
+        </platinum-bluetooth-characteristic>
+      </platinum-bluetooth-service>
+    </platinum-bluetooth-device>
   </template>
   <script>
+    window.toHexString = function(dataview) {
+      var buf = dataview;
+      var length = dataview.byteLength;
+      var string = '';
+      var i = 0;
+      while(i<length) {
+        string = string + ' 0x' + buf.getUint8(i).toString(16);
+        i++;
+      }
+      return string;
+    };
+
     Polymer({
       is: 'coffee-app',
       behaviors: [Polymer.CoffeeAppBehavior],
@@ -274,8 +307,12 @@
             });
         });
       },
-      _createDisabled: function() {
-        return (this.online && this.notes.length === 0)
+      _createDisabled: function(notes, user) {
+        return !(this.online && notes.length === 0)
+      },
+      _bluetoothDisabled: function(notes, user) {
+        if (!user) return true;
+        return (notes.length === 0 || !user.uid)
       },
       onNotesChange: function() {
         console.log('dom change: ' + this.persistedNotes);
@@ -286,6 +323,38 @@
         } else {
           this.$.dialog.close();
         }
+      },
+      connect: function() {
+        console.log('connect ble');
+        var bluetoothDevice = this.$.bluetoothDevice;
+        var dataOne = this.$.charDataOne;
+        var dataTwo = this.$.charDataTwo;
+        var dataLength = this.$.charDataLength;
+        var uriBeaconUUID = BluetoothUUID.getService(0xD8FE);
+
+        bluetoothDevice.request().then(function(device) {
+          return dataOne.read();
+        })
+        .then(function(val) {
+          var string = this.toHexString(val);
+          console.log('dataOne:' + string);
+          return dataTwo.read();
+        })
+        .then(function(val) {
+          var string = this.toHexString(val);
+          console.log('dataTwo:' + string);
+          return dataLength.read();
+        })
+        .then(function(val) {
+          var string = val.getUint8(0);
+          console.log('dataLength:' + string);
+          console.log('disconnect');
+          document.querySelector('platinum-bluetooth-device').disconnect();
+        })
+        .catch(function(error) {
+          console.log(error);
+          document.querySelector('platinum-bluetooth-device').disconnect();
+        });
       },
       get isEditable() {
         return this.online;

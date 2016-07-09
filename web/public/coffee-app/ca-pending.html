@@ -130,6 +130,7 @@
       },
 
       _userHidden(coffeeUser) {
+        if (!this.user) return;
         return !(this.user.displayName === coffeeUser);
       }
 

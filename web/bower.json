@@ -31,6 +31,7 @@
     "paper-badge": "PolymerElements/paper-badge#^1.1.2",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.5",
     "paper-card": "PolymerElements/paper-card#^1.1.1",
-    "platinum-push-messaging": "PolymerElements/platinum-push-messaging#^1.0.5"
+    "platinum-push-messaging": "PolymerElements/platinum-push-messaging#^1.0.5",
+    "platinum-bluetooth": "PolymerElements/platinum-bluetooth#^2.1.0"
   }
 }
