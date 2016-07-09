@@ -99,9 +99,17 @@
     <paper-input readonly="[[!editable]]" id="cup" value="{{ cup }}" label=" Number of cups" type="number">
       <iron-icon icon="maps:local-cafe" prefix> </iron-icon>
     </paper-input>
+    <div class="container flex">
+      <paper-input autoValidate="true" readonly="[[!editable]]" label=" Sugar (sp)" class="flexchild" value="{{ sugar }}" type="number" max="4" min="0" id="sugar">
+        <iron-icon icon="icons:grade" prefix> </iron-icon>
+      </paper-input>
+      <paper-input readonly="[[!editable]]" label=" Milk (sp)" class="flexchild" value="{{ milk }}" type="number" max="4" min="0" id="milk">
+        <iron-icon icon="icons:cloud-queue" prefix> </iron-icon>
+      </paper-input>
+    </div>
     <br>
     <div class="container flex">
-      <paper-toggle-button readonly="[[!editable]]" id="hot" checked="{{ hot }}" class="blue flexchild">
+      <paper-toggle-button on-change="shouldEdit" id="hot" checked="{{ hot }}" class="blue flexchild">
         Keep hot
       </paper-toggle-button>
       <paper-input readonly="[[!editable]]" label="Duration (min)" class="flexchild" value="{{ hotDuration }}" type="number" id="hot-duration">
@@ -109,7 +117,7 @@
       </paper-input>
     </div>
     <br>
-    <paper-toggle-button readonly="[[!editable]]" id="pw-enabled" checked="{{ pwEnabled }}" class="blue">
+    <paper-toggle-button on-change="shouldEdit" id="pw-enabled" checked="{{ pwEnabled }}" class="blue">
       Physical Web enabled
     </paper-toggle-button>
     <br>
@@ -141,6 +149,14 @@
           type: String,
           notify: true,
         },
+        sugar: {
+          type: Number,
+          notify: true
+        },
+        milk: {
+          type: Number,
+          notify: true,
+        },
         pwEnabled: {
           type: Boolean,
           notify: true,
@@ -165,7 +181,7 @@
       },
 
       observers: [
-        'updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste)',
+        'updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste, sugar, milk)',
         'requestPermission(pwEnabled)'
       ],
 
@@ -174,6 +190,12 @@
           return !content ? 'placeholder' : '';
         } else {
           return !content ? 'hidden' : '';
+        }
+      },
+
+      shouldEdit: function(event) {
+        if (this.editable === false){
+          event.target.checked =! event.target.checked;
         }
       },
 
@@ -230,8 +252,14 @@
         }
       },
 
-      updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste) {
+      updateTextContent(title, body, cup, hot, hotDuration, pwEnabled, taste, sugar, milk) {
         console.log(arguments);
+        var cup = parseInt(cup);
+        var milk = parseInt(milk);
+        var sugar = parseInt(sugar);
+        if (!(cup >= 0 && cup < 10)) this.$.cup.value = 0;
+        if (!(milk >= 0 && milk < 5)) this.$.milk.value = 0;
+        if (!(sugar >= 0 && sugar < 5)) this.$.sugar.value = 0;
         this.$.title.textContent = title;
         this.$.body.textContent = body;
       },
