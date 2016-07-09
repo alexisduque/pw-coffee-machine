@@ -80,7 +80,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div id="background"></div>
-    <ca-note id="note" title="{{note.title}}" body="{{note.body}}" hot="{{note.hot}}" cup="{{note.cup}}" taste="{{note.taste}}" hot-duration="{{note.hotDuration}}" pw-enabled="{{note.pwEnabled}}" body="{{note.body}}" user="[[user]]"  editable>
+    <ca-note id="note" title="{{note.title}}"
+      body="{{note.body}}"
+      hot="{{note.hot}}"
+      cup="{{note.cup}}"
+      taste="{{note.taste}}"
+      hot-duration="{{note.hotDuration}}"
+      pw-enabled="{{note.pwEnabled}}"
+      milk="{{note.milk}}"
+      sugar="{{note.sugar}}"
+      body="{{note.body}}"
+      user="[[user]]"  editable>
     </ca-note>
     <div class="controls">
       <paper-button on-tap="delete">Delete</paper-button>
@@ -121,12 +131,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.note = {
           title: 'Your coffee machine configuration',
           body: '',
-          pwEnabled: true,
-          cup: 10,
+          pwEnabled: false,
+          cup: 1,
+          milk: 0,
+          sugar: 0,
           hot: true,
           user: this.user,
           taste: 2,
-          hotDuration: 20
+          hotDuration: 2
         };
         this.transitionInFrom(this.getBoundingClientRect());
       },
