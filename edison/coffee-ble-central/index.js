@@ -1,12 +1,11 @@
 var noble = require('noble');
 var chalk = require('chalk');
-var FCM = require('fcm-push');
-var serverKey = 'AIzaSyDkgbBA2Hc1U94c0cssPhO3v0Qj_KABQPs';
-var fcm = new FCM(serverKey);
+var push = require('./push.js');
 var urldecode = require('./urldecode.js');
 var userdata = require('./userdata.js');
 var schedule = require('./schedule.js');
 var notify = require('./notify.js');
+var test = require('./test.js');
 var led = {};
 var brew = {};
 var resetMachine = {};
@@ -16,11 +15,6 @@ var brewDuration = 60;
 var resetInterval = 50 * 60;
 var objects = [];
 var scheduledCoffee = [];
-var data =  {
-  hotDuration: 10,
-  cup: 2,
-  taste: 'Espresso'
-};
 if (process.env.TEST !== '1') {
   var five = require('johnny-five');
   var Edison = require('edison-io');
@@ -37,18 +31,10 @@ if (process.env.TEST !== '1') {
     relay.off();
   });
 } else {
-  // notify('-KLknPTAzP1H5g9dEeB4').then(function(data) {});
-  // schedule(data);
-  var message = {
-      to: 'dpEsYqVCNkM:APA91bFJf6T0izwbcUiNGSnIiJgY_eGZjLLG3rxF_zGo3QWE2v2BGB1QXbjQUnxfVpzvwh7aYM0TvdmBch90k5r9pDX1nyutmgtpHFRCwm8TRvfD1VMuaIAFOw4VeiT6VgSQ-53qvPag', // required
-  };
-  fcm.send(message, function(err, response){
-      if (err) {
-          console.log("Something has gone wrong!");
-      } else {
-          console.log("Successfully sent with response: ", response);
-      }
-  });
+  //test.schedule();
+  //test.push();
+  //test.notify();
+  //test.userdata();
   led.off = function () {
     console.log(chalk.underline.bgRed('LED OFF !'));
   };
@@ -68,7 +54,6 @@ if (process.env.TEST !== '1') {
     console.log(chalk.underline.bgRed('Relay OFF !'));
   };
 }
-
 noble.on('stateChange', function (state) {
   if (state === 'poweredOn') {
     noble.startScanning(['fed8'], true);
@@ -81,7 +66,6 @@ noble.on('scanStart', function () {
   console.log();
   led.off();
   led.blink();
-  userdata({url: 'https://goo.gl/7LGLLK'});
 });
 noble.on('scanStop', function () {
   console.log(chalk.dim('Scan stopped...'));
@@ -102,17 +86,18 @@ noble.on('discover', function (peripheral) {
     }
     if (object && !objects.length && !brewScheduled) {
       objects.push(object);
-      userdata(objects[0]).then(function(data) {
+      userdata(objects[0]).then(function (user) {
+        var coffee = user.coffee;
+        console.log(JSON.stringify(coffee));
+        var data = coffee;
         if (data.pwEnabled) {
           console.log(chalk.underline.bgGreen('Coffee is brewing !'));
-          pending(data).then(function(data) {
+          schedule(user).then(function (data) {
             scheduledCoffee.push(data);
-            notify(data).then(function(data) {
-            });
           });
           brewScheduled = true;
           keepHot = data.hot ? data.hotDuration * 60 : 0;
-          brewDuration = data.cup * 180 + keepHot;
+          brewDuration = data.cup + keepHot;
           relay.on();
           brew = new Promise(function (resolve, reject) {
             setTimeout(resolve, brewDuration * 1000);
@@ -123,17 +108,16 @@ noble.on('discover', function (peripheral) {
           brew.then(function () {
             console.log(chalk.underline.bgGreen('Coffee Ready !'));
             relay.off();
-            var coffeeId = scheduledCoffee.shift();
-            notify(coffeeId).then(function(data) {
-              scheduledCoffee.push(data);
-            });
-            return reset;
+            var schedule = scheduledCoffee.shift();
+            var coffeeId = schedule.scheduleId;
+            push(schedule);
+            notify(coffeeId);
           });
           resetMachine.then(function () {
             console.log(chalk.underline.bgYellow('Machine reset'));
             brewScheduled = false;
             objects.pop();
-          })
+          });
         } else {
           objects.pop();
         }

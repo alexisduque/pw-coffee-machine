@@ -13,7 +13,7 @@ module.exports = function (urldata) {
     method: 'GET',
     agent: false
   };
-  var req = https.get(options, function(resp){
+  var req = https.get(options, function (resp) {
     resp.setEncoding('utf-8');
     var responseString = '';
     if (resp.headers['content-type'] !== 'application/json; charset=utf-8') {
@@ -21,31 +21,30 @@ module.exports = function (urldata) {
       console.log();
       deferred.reject('Invalid content');
     }
-    resp.on('data', function(chunk){
+    resp.on('data', function (chunk) {
       responseString += chunk;
     });
     resp.on('end', function () {
       try {
         var response = JSON.parse(responseString);
-        for (var i in response) {
-          if (response.hasOwnProperty(i)) {
-            var data = response[i];
-            if (data.hasOwnProperty('hotDuration')) {
-              console.log(chalk.underline.bgBlue(' ' + data.title + ' '));
-              console.log(chalk.underline.bgGreen('Hot:') + ' ' + data.hotDuration);
-              console.log(chalk.underline.bgGreen('Taste:') + ' ' + data.taste);
-              console.log(chalk.underline.bgGreen('User:') + ' ' + data.user);
-              console.log(chalk.underline.bgGreen('PW Enabled:') + ' ' + data.pwEnabled);
-              console.log(chalk.underline.bgGreen('Cup:') + ' ' + data.cup);
-              console.log();
-              deferred.resolve(data);
-            } else {
-              console.log(chalk.underline.bgRed('Invalid JSON: ' + data));
-              console.log();
-              deferred.reject('Missing content');
-            }
-
-          }
+        if (response.hasOwnProperty('coffee')) {
+          var data = response.coffee[Object.keys(response.coffee)[0]];
+          // console.log(chalk.underline.bgBlue(' User:' + user.info.displayName + ' '));
+          console.log(chalk.underline.bgBlue(' ' + data.title + ' '));
+          console.log(chalk.underline.bgGreen('Hot:') + ' ' + data.hotDuration);
+          console.log(chalk.underline.bgGreen('Taste:') + ' ' + data.taste);
+          console.log(chalk.underline.bgGreen('User:') + ' ' + data.user);
+          console.log(chalk.underline.bgGreen('PW Enabled:') + ' ' + data.pwEnabled);
+          console.log(chalk.underline.bgGreen('Cup:') + ' ' + data.cup);
+          console.log();
+          response.coffee = data;
+          console.log(JSON.stringify(response));
+          deferred.resolve(response);
+        } else {
+          console.log(chalk.underline.bgRed('Invalid JSON: ' + JSON.stringify(response)));
+          console.log(chalk.underline.bgRed('Invalid JSON: ' + JSON.stringify(response)));
+          console.log();
+          deferred.reject('Missing content');
         }
       } catch (e) {
         console.log(chalk.underline.bgRed('Error: ' + e));
@@ -54,7 +53,7 @@ module.exports = function (urldata) {
       }
     });
   });
-  req.on("error", function(e){
+  req.on('error', function (e) {
     console.log(chalk.underline.bgRed('Error: ' + e));
     console.log();
     deferred.reject('Invalid URL');
