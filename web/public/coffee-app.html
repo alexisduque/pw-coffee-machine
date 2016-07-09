@@ -12,10 +12,20 @@
 <link rel="import" href="./bower_components/paper-drawer-panel/paper-drawer-panel.html">
 <link rel="import" href="./bower_components/platinum-push-messaging/platinum-push-messaging.html">
 <link rel="import" href="./bower_components/platinum-bluetooth/platinum-bluetooth-elements.html">
+<link rel="import" href="./bower_components/paper-toast/paper-toast.html">
 
 <dom-module id="coffee-app">
   <template>
     <style include="coffee-app-shared-styles"></style>
+    <style is="custom-style">
+    :host {
+        --toast-color: var(--paper-yellow-500);
+      }
+    .toast-button {
+      text-transform: none;
+      color: var(--toast-color);
+    }
+  </style>
     <paper-drawer-panel id="drawer"
       disable-swipe="[[!signedIn]]" force-narrow>
       <ca-pending drawer
@@ -131,7 +141,9 @@
         </div>
       </div>
     </paper-drawer-panel>
-
+    <paper-toast id="toastBle" duration="0" text="Physical Web beacon configured.">
+      <paper-button onclick="toastBle.toggle()" class="toast-button">Close now!</paper-button>
+    </paper-toast>
     <paper-dialog
       entry-animation="scale-up-animation"
       exit-animation="fade-out-animation"
@@ -204,6 +216,7 @@
       },
       listeners: {
         'need-short-url': 'apiAuth',
+        'bluetoothend': '_onBluetoothEnd'
       },
       observers: [
         '_pendingChanged(pending.splices)',
@@ -226,6 +239,15 @@
               }
             }.bind(this));
         }
+      },
+      _onBluetoothEnd: function(e, detail) {
+        if (detail.error) {
+          this.$.toastBle.text = detail.error;
+          this.customStyle['--toast-color'] = 'var(--paper-red-500)';
+          this.updateStyles();
+          this.$.toastBle.class = 'red-button';
+        }
+        this.$.toastBle.toggle();
       },
       _urlChanged: function() {
         if(this.shortUrl) {
@@ -330,7 +352,7 @@
         var dataOne = this.$.charDataOne;
         var dataTwo = this.$.charDataTwo;
         var dataLength = this.$.charDataLength;
-        var uriBeaconUUID = BluetoothUUID.getService(0xD8FE);
+        //var uriBeaconUUID = BluetoothUUID.getService(0xD8FE);
 
         bluetoothDevice.request().then(function(device) {
           return dataOne.read();
@@ -349,9 +371,11 @@
           var string = val.getUint8(0);
           console.log('dataLength:' + string);
           console.log('disconnect');
+          document.querySelector('coffee-app').fire('bluetoothend');
           document.querySelector('platinum-bluetooth-device').disconnect();
         })
         .catch(function(error) {
+          document.querySelector('coffee-app').fire('bluetoothend',{error: error});
           console.log(error);
           document.querySelector('platinum-bluetooth-device').disconnect();
         });
