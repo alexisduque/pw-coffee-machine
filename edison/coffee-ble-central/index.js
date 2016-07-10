@@ -79,7 +79,7 @@ noble.on('discover', function (peripheral) {
     for (var i in serviceData) {
       // check if Eddystone-URL
       var hexData = serviceData[i].data.toString('hex');
-      if (hexData.substr(0, 2) === '00') {
+      if (hexData.substr(0, 2) === '10') {
         var url = urldecode(hexData);
         var object = { 'url': url };
       }
