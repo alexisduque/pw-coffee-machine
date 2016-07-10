@@ -172,11 +172,11 @@
      services-filter='["b35d7da6-eed4-4d59-8f89-f6573edea967"]'
      optional-services-filter="['b35d7da6-eed4-4d59-8f89-f6573edea967']">
       <platinum-bluetooth-service service='b35d7da6-eed4-4d59-8f89-f6573edea967'>
-        <platinum-bluetooth-characteristic id="charDataOne" characteristic='b35d7da7-eed4-4d59-8f89-f6573edea967'>
+        <platinum-bluetooth-characteristic id="charDataOne" characteristic='b35d7da7-eed4-4d59-8f89-f6573edea967' autoWrite>
         </platinum-bluetooth-characteristic>
-        <platinum-bluetooth-characteristic id="charDataTwo" characteristic='b35d7da8-eed4-4d59-8f89-f6573edea967'>
+        <platinum-bluetooth-characteristic id="charDataTwo" characteristic='b35d7da8-eed4-4d59-8f89-f6573edea967' autoWrite>
         </platinum-bluetooth-characteristic>
-        <platinum-bluetooth-characteristic id="charDataLength" characteristic='b35d7da9-eed4-4d59-8f89-f6573edea967'>
+        <platinum-bluetooth-characteristic id="charDataLength" characteristic='b35d7da9-eed4-4d59-8f89-f6573edea967' autoWrite>
         </platinum-bluetooth-characteristic>
       </platinum-bluetooth-service>
     </platinum-bluetooth-device>
@@ -228,7 +228,9 @@
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
         }, 5000);
-        this.dataOne();
+        this.listen(this.$.charDataOne, 'platinum-bluetooth-auto-write-error', '_onBluetoothEnd');
+        this.listen(this.$.charDataTwo, 'platinum-bluetooth-auto-write-error', '_onBluetoothEnd');
+        this.listen(this.$.charDataLength, 'platinum-bluetooth-auto-write-error', '_onBluetoothEnd');
       },
       _userChanged: function() {
         if(this.user) {
@@ -318,11 +320,18 @@
       get notify(){
         return this.$.push.enabled;
       },
-      dataOne: function(shortUrl){
+      updateBeacon: function(shortUrl){
+        var dataOne = this.$.charDataOne;
+        var dataTwo = this.$.charDataTwo;
+        var shortUrl = this.shortUrl.value;
+        if (!shortUrl) {
+          return;
+        }
+        var dataLength = this.$.charDataLength;
         var header = [0x03,0x03,0xD8,0xFE,0x13,0x16,0xD8,0xFE,0x00,0xEA,0x03]
         var buffer = new ArrayBuffer(20);
         var url = 'https://goo.gl/ZvXzjj';
-        url = url.substr(8);
+        url = shortUrl.substr(8);
         console.log(url);
         var dv = new DataView(buffer, 0)
         var i = 0;
@@ -336,6 +345,7 @@
           i++;
           j++;
         }
+        dataOne.value = dv;
         console.log(window.toHexString(dv));
         var buffer2 = new ArrayBuffer(20);
         var dv2 = new DataView(buffer2, 0)
@@ -345,10 +355,12 @@
           i++;
           j++;
         }
+        dataTwo.value = dv2;
         var dataLength = url.length + 11;
         var dv3 = new Uint8Array([dataLength]);
         console.log(window.toHexString(dv2));
         console.log('length: ' + dataLength);
+        dataLength.value = dv2;
         return [dv, dv2, dv3]
       },
       subscribePush: function() {
@@ -405,10 +417,13 @@
           var string = val.getUint8(0);
           console.log('dataLength:' + string);
           console.log('disconnect');
+          document.querySelector('coffee-app').updateBeacon();
           document.querySelector('coffee-app').fire('bluetoothend');
-          document.querySelector('platinum-bluetooth-device').disconnect();
+          //document.querySelector('platinum-bluetooth-device').disconnect();
         })
         .catch(function(error) {
+          document.querySelector('coffee-app').updateBeacon();
+
           document.querySelector('coffee-app').fire('bluetoothend',{error: error});
           console.log(error);
           document.querySelector('platinum-bluetooth-device').disconnect();
