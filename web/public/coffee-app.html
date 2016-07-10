@@ -53,7 +53,7 @@
         <paper-fab
           icon="add"
           on-tap="create"
-          hidden$="[[_createDisabled(persistedNotes.*, user)]]"
+          hidden$="[[_createDisabled(notes.*, user)]]"
           aria-label="Add note">
         </paper-fab>
         <paper-fab
@@ -61,7 +61,7 @@
           icon="settings-bluetooth"
           on-click="connect"
           class="bluetooth"
-          hidden$="[[_bluetoothDisabled(persistedNotes.*, user)]]"
+          hidden$="[[_bluetoothDisabled(notes.*, user)]]"
           aria-label="Configure Beacon">
         </paper-fab>
         <ca-editor
@@ -172,11 +172,11 @@
      services-filter='["b35d7da6-eed4-4d59-8f89-f6573edea967"]'
      optional-services-filter="['b35d7da6-eed4-4d59-8f89-f6573edea967']">
       <platinum-bluetooth-service service='b35d7da6-eed4-4d59-8f89-f6573edea967'>
-        <platinum-bluetooth-characteristic id="charDataOne" characteristic='b35d7da7-eed4-4d59-8f89-f6573edea967' autoWrite>
+        <platinum-bluetooth-characteristic id="charDataOne" characteristic='b35d7da7-eed4-4d59-8f89-f6573edea967'>
         </platinum-bluetooth-characteristic>
-        <platinum-bluetooth-characteristic id="charDataTwo" characteristic='b35d7da8-eed4-4d59-8f89-f6573edea967' autoWrite>
+        <platinum-bluetooth-characteristic id="charDataTwo" characteristic='b35d7da8-eed4-4d59-8f89-f6573edea967'>
         </platinum-bluetooth-characteristic>
-        <platinum-bluetooth-characteristic id="charDataLength" characteristic='b35d7da9-eed4-4d59-8f89-f6573edea967' autoWrite>
+        <platinum-bluetooth-characteristic id="charDataLength" characteristic='b35d7da9-eed4-4d59-8f89-f6573edea967'>
         </platinum-bluetooth-characteristic>
       </platinum-bluetooth-service>
     </platinum-bluetooth-device>
@@ -205,7 +205,6 @@
         shortUrl: {
           type: Object,
           notify: true,
-          observer: '_urlChanged'
         },
         pending: {
           type: Array,
@@ -216,21 +215,20 @@
       },
       listeners: {
         'need-short-url': 'apiAuth',
-        'bluetoothend': '_onBluetoothEnd'
+        'bluetoothend': '_bluetoothEnded'
       },
       observers: [
-        '_pendingChanged(pending.splices)',
-        '_subscriptionChange(subscription)'
+        '_notesChanged(persistedNotes.*)'
       ],
       ready: function() {
-        this.subscribePush();
-        this.async(this.onNotesChange, 5000);
+        /*
+        this.async(this._notesChanged, 5000);
         this.async(function(){
           this.listen(this.$.notes, 'dom-change', 'onNotesChange');
-        }, 5000);
-        this.listen(this.$.charDataOne, 'platinum-bluetooth-auto-write-error', '_onBluetoothEnd');
-        this.listen(this.$.charDataTwo, 'platinum-bluetooth-auto-write-error', '_onBluetoothEnd');
-        this.listen(this.$.charDataLength, 'platinum-bluetooth-auto-write-error', '_onBluetoothEnd');
+        }, 5000);*/
+        this.listen(this.$.charDataOne, 'platinum-bluetooth-auto-write-error', '_bluetoothEnded');
+        this.listen(this.$.charDataTwo, 'platinum-bluetooth-auto-write-error', '_bluetoothEnded');
+        this.listen(this.$.charDataLength, 'platinum-bluetooth-auto-write-error', '_bluetoothEnded');
       },
       _userChanged: function() {
         if(this.user) {
@@ -243,45 +241,19 @@
             }.bind(this));
         }
       },
-      _onBluetoothEnd: function(e, detail) {
+      _bluetoothEnded: function(e, detail) {
+        var toastBle = document.getElementById('toastBle');
         if (detail.error) {
-          this.$.toastBle.text = detail.error;
+          toastBle.text = detail.error;
           this.customStyle['--toast-color'] = 'var(--paper-red-500)';
           this.updateStyles();
-          this.$.toastBle.class = 'red-button';
+        } else {
+          toastBle.text = detail.message;
+          this.customStyle['--toast-color'] = 'var(--paper-yellow-500)';
+          this.updateStyles();
         }
-        this.$.toastBle.toggle();
+        toastBle.toggle();
       },
-      _urlChanged: function() {
-        if(this.shortUrl) {
-          console.log(this.shortUrl);
-        }
-      },
-      _subscriptionChange: function(newVal, oldVal) {
-        if (newVal.endpoint) {
-          console.log('subscription: ' + newVal.endpoint);
-        }
-      },
-      _pendingChanged: function(changeRecord) {
-        if (changeRecord) {
-          var auth = document.getElementById('auth');
-          var push = document.getElementById('push');
-          changeRecord.indexSplices.forEach(function(s) {
-            s.removed.forEach(function(pending) {
-              console.log(pending.user + ' was removed');
-              if (pending.user === auth.user.displayName) {
-                // push.testPush('Coffee Ready');
-              }
-            });
-            for (var i=0; i<s.addedCount; i++) {
-              var index = s.index + i;
-              var newUser = s.object[index];
-              console.log('User ' + newUser.user + ' added at index ' + index);
-            }
-          }, this);
-        }
-      },
-
       apiAuth: function(event) {
         var shortener = this.$.shortener;
         var request = shortener.api.url.insert({
@@ -324,15 +296,13 @@
         var dataOne = this.$.charDataOne;
         var dataTwo = this.$.charDataTwo;
         var shortUrl = this.shortUrl.value;
+        var dataLength = this.$.charDataLength;
         if (!shortUrl) {
           return;
         }
-        var dataLength = this.$.charDataLength;
         var header = [0x03,0x03,0xD8,0xFE,0x13,0x16,0xD8,0xFE,0x00,0xEA,0x03]
         var buffer = new ArrayBuffer(20);
-        var url = 'https://goo.gl/ZvXzjj';
         url = shortUrl.substr(8);
-        console.log(url);
         var dv = new DataView(buffer, 0)
         var i = 0;
         var j = 0;
@@ -345,45 +315,29 @@
           i++;
           j++;
         }
-        dataOne.value = dv;
-        console.log(window.toHexString(dv));
-        var buffer2 = new ArrayBuffer(20);
+        var length = url.length-j;
+        var buffer2 = new ArrayBuffer(length);
         var dv2 = new DataView(buffer2, 0)
         i=0;
-        while(j<url.length && i<20) {
+        while(j<url.length && i<length) {
           dv2.setUint8(i, url.charCodeAt(j));
           i++;
           j++;
         }
-        dataTwo.value = dv2;
         var dataLength = url.length + 11;
         var dv3 = new Uint8Array([dataLength]);
-        console.log(window.toHexString(dv2));
         console.log('length: ' + dataLength);
-        dataLength.value = dv2;
         return [dv, dv2, dv3]
       },
-      subscribePush: function() {
-        navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-          serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
-            .then(function(pushSubscription) {
-              //Store this subscription on application server
-              console.log(pushSubscription);
-            })
-            .catch(function(e) {
-              console.error('Unable to register push subscription', e);
-            });
-        });
-      },
       _createDisabled: function(notes, user) {
-        return !(this.online && notes.length === 0)
+        return !(this.online && notes.value.length === 0)
       },
       _bluetoothDisabled: function(notes, user) {
         if (!user) return true;
-        return (notes.length === 0 || !user.uid)
+        return (notes.value.length === 0 || !user.uid)
       },
-      onNotesChange: function() {
-        console.log('dom change: ' + this.persistedNotes);
+      _notesChanged: function(persistedNotes) {
+        console.log('dom change: ' + JSON.stringify(persistedNotes));
         if (this.$.indexdb.persistedData.length == 0
            && this.signedIn
             && this.online) {
@@ -393,40 +347,29 @@
         }
       },
       connect: function() {
-        console.log('connect ble');
         var bluetoothDevice = this.$.bluetoothDevice;
         var dataOne = this.$.charDataOne;
         var dataTwo = this.$.charDataTwo;
         var dataLength = this.$.charDataLength;
-        //var uriBeaconUUID = BluetoothUUID.getService(0xD8FE);
-
+        var values = this.updateBeacon();
         bluetoothDevice.request().then(function(device) {
-          return dataOne.read();
+          return dataOne.write(values[0].buffer);
         })
-        .then(function(val) {
-          var string = this.toHexString(val);
-          console.log('dataOne:' + string);
-          return dataTwo.read();
+        .then(function() {
+          return dataTwo.write(values[1].buffer);
         })
-        .then(function(val) {
-          var string = this.toHexString(val);
-          console.log('dataTwo:' + string);
-          return dataLength.read();
+        .then(function() {
+          return dataLength.write(values[2].buffer);
         })
-        .then(function(val) {
-          var string = val.getUint8(0);
-          console.log('dataLength:' + string);
-          console.log('disconnect');
-          document.querySelector('coffee-app').updateBeacon();
-          document.querySelector('coffee-app').fire('bluetoothend');
-          //document.querySelector('platinum-bluetooth-device').disconnect();
+        .then(function() {
+          document.querySelector('coffee-app')
+            .fire('bluetoothend', {message: 'Physical Web beacon configured.'});
+          bluetoothDevice.disconnect();
         })
         .catch(function(error) {
-          document.querySelector('coffee-app').updateBeacon();
-
           document.querySelector('coffee-app').fire('bluetoothend',{error: error});
-          console.log(error);
-          document.querySelector('platinum-bluetooth-device').disconnect();
+          bluetoothDevice.disconnect();
+          bluetoothDevice.reset();
         });
       },
       get isEditable() {
