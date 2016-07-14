@@ -97,8 +97,10 @@ noble.on('discover', function (peripheral) {
           });
           brewScheduled = true;
           keepHot = data.hot ? data.hotDuration * 60 : 0;
-          brewDuration = data.cup + keepHot;
+          brewDuration = data.cup * 20  + keepHot;
           relay.on();
+          led.stop();
+          led.on();
           brew = new Promise(function (resolve, reject) {
             setTimeout(resolve, brewDuration * 1000);
           });
@@ -108,6 +110,8 @@ noble.on('discover', function (peripheral) {
           brew.then(function () {
             console.log(chalk.underline.bgGreen('Coffee Ready !'));
             relay.off();
+            led.off();
+            led.blink();
             var schedule = scheduledCoffee.shift();
             var coffeeId = schedule.scheduleId;
             push(schedule);
