@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Physical Web Coffee Machine Simulator">
+  <title>Physical Web Coffee Machine Simulator</title>
+
+  <base href="/">
+
+  <link rel="import" href="coffee-simulator-app.html">
+
+  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <!-- endbuild -->
+
+  <!-- For shared styles, shared-styles.html import in elements.html -->
+  <style is="custom-style" include="shared-styles">
+    body {
+      background: var(--primary-background-color);
+      font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #333;
+    }
+
+    .page-title {
+      outline: none;
+    }
+  </style>
+</head>
+
+<body unresolved>
+  <!-- build:remove -->
+  <span id="browser-sync-binding"></span>
+  <!-- endbuild -->
+  <platinum-sw-register auto-register skip-waiting clients-claim reload-on-install href="sw-import.js">
+    <platinum-sw-cache cache-config-file="cache-config.json" default-cache-strategy="networkFirst">
+    </platinum-sw-cache>
+</platinum-sw-register>
+  <firebase-app id="app" name="physical-web-coffee-simulator" api-key="AIzaSyB-WLt_offrWvnScHbD5TavOkFXZJgw1dc" auth-domain="physical-web-coffee-simulator.firebaseapp.com" database-url="https://physical-web-coffee.firebaseio.com">
+    <coffee-simulator-app></coffee-simulator-app>
+  </firebase-app>
+</body>
+
+</html>

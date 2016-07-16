@@ -1,0 +1,25 @@
+{
+  "name": "coffee-simulator-app",
+  "authors": [
+    "Alexis Duque"
+  ],
+  "version": "0.1.0",
+  "description": "A Physical Web Coffe Machine Simulator",
+  "private": true,
+  "dependencies": {
+    "polymerfire": "firebase/polymerfire#~0.9.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "page": "visionmedia/page.js#~1.6.4",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
+    "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
+    "polymer": "Polymer/polymer#^1.2.0",
+    "app-layout": "PolymerElements/app-layout#^0.10.0",
+    "paper-fab": "PolymerElements/paper-fab#^1.2.0",
+    "animated-countdown": "kcmr/animated-countdown#^0.2.3"
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.0.0"
+  },
+  "ignore": []
+}

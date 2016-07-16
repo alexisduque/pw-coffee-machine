@@ -1,0 +1,188 @@
+<link rel="import" href="coffee-simulator-app/csa-elements.html">
+
+<dom-module id="coffee-simulator-app">
+
+  <style is="custom-style">
+    body {
+      margin: 0;
+      font-family: 'Roboto', 'Noto', sans-serif;
+    }
+
+    app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      color: #fff;
+      background-color: var(--primary-color);
+      --app-header-background-front-layer: {
+        background-image: url(images/wall-coffee.jpg);
+      };
+    }
+
+    paper-icon-button {
+      --paper-icon-button-ink-color: white;
+    }
+
+    paper-fab {
+      position: absolute;
+      right: 16px;
+      top: 248px;
+      will-change: transform;
+      transition: 0.1s -webkit-transform;
+      transition: 0.1s transform;
+    }
+
+    paper-fab.shrink-to-hidden {
+      -webkit-transform: scale3d(0, 0, 0);
+      transform: scale3d(0, 0, 0);
+    }
+
+    app-toolbar.middle {
+      height: 120px;
+    }
+
+    app-toolbar.bottom {
+      height: 92px;
+    }
+
+    #main {
+      margin: 64px;
+    }
+
+    [main-title] {
+      margin-left: 64px;
+      font-size: 42px;
+      font-weight: 400;
+    }
+
+    [condensed-title] {
+      margin-left: 20px;
+      font-weight: 300;
+    }
+    paper-card { @apply(--layout-horizontal); }
+    .card {
+      margin-bottom: 5px;
+    }
+    .coffee-image {
+        width: 200px;
+        height: 170px;
+        background: url('../images/espresso.jpg');
+        background-size: cover;
+    }
+    .sugar-image {
+        width: 200px;
+        height: 170px;
+        background: url('../images/sugar.jpg');
+        background-size: cover;
+    }
+    .milk-image {
+        width: 200px;
+        height: 170px;
+        background: url('../images/milk.jpg');
+        background-size: cover;
+    }
+    .mycard-content {
+      @apply(--layout-flex);
+      float: left;
+    }
+    .card-header { @apply(--paper-font-headline); }
+    .card-name { color: var(--paper-grey-600); margin: 10px 0; }
+      paper-icon-button.card-icon {
+        --iron-icon-fill-color: var(--light-accent-color);
+        --iron-icon-stroke-color: var(--paper-grey-600);
+      }
+  </style>
+  <template>
+    <app-header-layout>
+      <app-header effects="waterfall resize-title blend-background parallax-background" condenses reveals>
+        <app-toolbar>
+          <div condensed-title>Coffee Machine Simulator</div>
+          <paper-icon-button icon="more-vert"></paper-icon-button>
+        </app-toolbar>
+        <app-toolbar class="middle"></app-toolbar>
+        <app-toolbar class="bottom">
+          <div main-title>Coffee Machine Simulator</div>
+        </app-toolbar>
+        <paper-fab icon="alarm-on"></paper-fab>
+      </app-header>
+
+      <div id="main">
+        <paper-card class="card">
+          <div class="mycard-content">
+            <div class="card-content">
+              <div class="card-header">Status</div>
+              <div>Preparing Alexis's coffee</div>
+              <div class="card-name">Pendings : 2</div>
+            </div>
+            <div class="card-actions">
+              <paper-icon-button icon="alarm-on"> </paper-icon-button>
+              <animated-countdown
+                class="inline"
+                seconds="45"
+                end-text="Your coffee is ready !"
+                start-text="Preparing…"
+                autostart-delay="2000"
+                auto-start>
+              </animated-countdown>
+            </div>
+          </div>
+        </paper-card>
+        <br>
+        <paper-card class="card">
+          <div class="mycard-content">
+            <div class="card-content">
+              <div class="card-header">Coffee Type</div>
+              <div>Largo</div>
+              <div class="card-name">Quantity (cup)</div>
+            </div>
+            <div class="card-actions">
+              <paper-icon-button class="card-icon" icon="maps:local-cafe"></paper-icon-button>
+              <paper-icon-button class="card-icon" icon="maps:local-cafe"></paper-icon-button>
+              <paper-icon-button class="card-icon" icon="maps:local-cafe"></paper-icon-button>
+            </div>
+          </div>
+          <div class="coffee-image"></div>
+        </paper-card>
+        <paper-card class="card">
+          <div class="mycard-content">
+            <div class="card-content">
+              <div class="card-header">Sugar</div>
+              <div class="card-name">Quantity (spoon)</div>
+              <div>Live from space</div>
+
+            </div>
+            <div class="card-actions">
+              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+            </div>
+          </div>
+          <div class="sugar-image"></div>
+        </paper-card>
+        <paper-card class="card">
+          <div class="mycard-content">
+            <div class="card-content">
+              <div class="card-header">Milk</div>
+              <div class="card-name">Quantity (spoon)</div>
+            </div>
+            <div class="card-actions">
+              <paper-icon-button class="card-icon" icon="maps:local-drink"></paper-icon-button>
+            </div>
+          </div>
+          <div class="milk-image"></div>
+        </paper-card>
+      </div>
+    </app-header-layout>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'coffee-simulator-app'
+
+    });
+  </script>
+</dom-module>
