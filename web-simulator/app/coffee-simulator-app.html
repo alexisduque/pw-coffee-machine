@@ -112,18 +112,18 @@
           <div class="mycard-content">
             <div class="card-content">
               <div class="card-header">Status</div>
-              <div>Preparing <b>{{pending.user}}'s</b> coffee</div>
+              <div id="status"></div>
               <div class="card-name">Pendings : <b>{{ pendingCount }}</b></div>
             </div>
             <div class="card-actions">
               <paper-icon-button icon="alarm-on"> </paper-icon-button>
               <animated-countdown
+                id="counter"
                 class="inline"
                 seconds="45"
                 end-text="Your coffee is ready !"
                 start-text="Preparing…"
-                autostart-delay="2000"
-                auto-start>
+                autostart-delay="2000">
               </animated-countdown>
             </div>
           </div>
@@ -136,10 +136,8 @@
               <div>{{ type }}</div>
               <div class="card-name">Quantity (cup)</div>
             </div>
-            <div class="card-actions">
-              <paper-icon-button class="card-icon" icon="maps:local-cafe"></paper-icon-button>
-              <paper-icon-button class="card-icon" icon="maps:local-cafe"></paper-icon-button>
-              <paper-icon-button class="card-icon" icon="maps:local-cafe"></paper-icon-button>
+            <div id="cup" class="card-actions">
+              <paper-icon-button hidden class="card-icon" icon="maps:local-cafe"></paper-icon-button>
             </div>
           </div>
           <div class="coffee-image"></div>
@@ -152,12 +150,8 @@
               <div>Live from space</div>
 
             </div>
-            <div class="card-actions">
-              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
-              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
-              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
-              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
-              <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+            <div id="sugar" class="card-actions">
+                <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
             </div>
           </div>
           <div class="sugar-image"></div>
@@ -168,8 +162,8 @@
               <div class="card-header">Milk</div>
               <div class="card-name">Quantity (spoon)</div>
             </div>
-            <div class="card-actions">
-              <paper-icon-button class="card-icon" icon="maps:local-drink"></paper-icon-button>
+            <div id="milk" class="card-actions">
+              <paper-icon-button class="card-icon" hidden icon="maps:local-drink"></paper-icon-button>
             </div>
           </div>
           <div class="milk-image"></div>
@@ -266,6 +260,11 @@
                var pending = s.object[index];
              }
            }, this);
+          this.displayMilk(this.pendings[0]);
+          this.displayCup(this.pendings[0]);
+          this.displaySugar(this.pendings[0]);
+          this.displayStatus(this.pendings[0]);
+          this.setTimer(this.pendings[0]);
           return this.pendings[0];
         }
         return {};
@@ -274,6 +273,55 @@
         if (this.pendings && this.pendings.length > 0)
           return this.pendings.length - 1;
         return 0;
+      },
+      displayMilk: function(pending) {
+        var milkNode = this.$.milk.children[0].cloneNode(true)
+        var milk = this.$.milk;
+        milkNode.removeAttribute('hidden');
+        while (milk.hasChildNodes())
+          milk.removeChild(milk.lastChild);
+        for (var i = 0; i < pending.milk; i++) {
+          var appended = milkNode.cloneNode(true);
+          milk.appendChild(appended);
+        }
+      },
+      displayCup: function(pending) {
+        var cupNode = this.$.cup.children[0].cloneNode(true)
+        var cup = this.$.cup;
+        cupNode.removeAttribute('hidden');
+        while (cup.hasChildNodes())
+          cup.removeChild(cup.lastChild);
+        for (var i = 0; i < pending.cup; i++) {
+          var appended = cupNode.cloneNode(true);
+          cup.appendChild(appended);
+        }
+      },
+      displaySugar: function(pending) {
+        var sugarNode = this.$.sugar.children[0].cloneNode(true)
+        var sugar = this.$.sugar;
+        sugarNode.removeAttribute('hidden');
+        while (sugar.hasChildNodes())
+          sugar.removeChild(sugar.lastChild);
+        for (var i = 0; i < pending.sugar; i++) {
+          var appended = sugarNode.cloneNode(true);
+          sugar.appendChild(appended);
+        }
+      },
+      displayStatus: function(pending) {
+        if (pending && pending.user)  {
+          this.$.status.innerHTML = 'Preparing <b>' + pending.user + '\'s</b> coffee.'
+        } else {
+          this.$.status.innerHTML = 'Th coffee machine is <b>iddle</b>'
+        }
+      },
+      setTimer: function(pending) {
+        var duration = pending.cup * 40;
+        this.$.counter.seconds = duration;
+        this.$.counter.start();
+        this.listen(this.$.counter, 'animated-countdown-finish', 'onCoffeeReady');
+      },
+      onCoffeeReady: function(event) {
+        console.log('Coffee ready !!');
       }
     });
   </script>
