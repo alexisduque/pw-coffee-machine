@@ -112,8 +112,8 @@
           <div class="mycard-content">
             <div class="card-content">
               <div class="card-header">Status</div>
-              <div>Preparing Alexis's coffee</div>
-              <div class="card-name">Pendings : 2</div>
+              <div>Preparing <b>{{pending.user}}'s</b> coffee</div>
+              <div class="card-name">Pendings : <b>{{ pendingCount }}</b></div>
             </div>
             <div class="card-actions">
               <paper-icon-button icon="alarm-on"> </paper-icon-button>
@@ -133,7 +133,7 @@
           <div class="mycard-content">
             <div class="card-content">
               <div class="card-header">Coffee Type</div>
-              <div>Largo</div>
+              <div>{{ type }}</div>
               <div class="card-name">Quantity (cup)</div>
             </div>
             <div class="card-actions">
@@ -176,13 +176,105 @@
         </paper-card>
       </div>
     </app-header-layout>
+
+    <firebase-query
+      id="pending-query"
+      app-name="physical-web-coffee"
+      path="pending"
+      data="{{ pendings }}">
+    </firebase-query>
+
   </template>
 
   <script>
     Polymer({
 
-      is: 'coffee-simulator-app'
-
+      is: 'coffee-simulator-app',
+      properties: {
+        pendings: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+        pending : {
+          type: Object,
+          computed: 'computeCurrent(pendings.splices)'
+        },
+        pendingCount : {
+          type: Number,
+          computed: 'getPending(pendings.splices)'
+        },
+        date : {
+          type: String,
+          computed: 'computeHumanDate(pendings.splices)'
+        },
+        type : {
+          type: Object,
+          computed: 'computeHumanType(pendings.splices)'
+        },
+      },
+      observers: [
+        '_pendingsChanged(pendings.splices)'
+      ],
+      _pendingsChanged: function(changeRecord) {
+        if (changeRecord) {
+          changeRecord.indexSplices.forEach(function(s) {
+             s.removed.forEach(function(pending) {
+               console.log(pending.user + ' was removed');
+             });
+             for (var i=0; i<s.addedCount; i++) {
+               var index = s.index + i;
+               var pending = s.object[index];
+               console.log('User ' + pending.user + ' added at index ' + index);
+             }
+           }, this);
+         }
+       },
+      computeHumanDate(changes) {
+         return new Date(this.pending.date).toLocaleTimeString();
+       },
+      computeHumanType(changes) {
+         switch (this.pending.type) {
+           case 0:
+             return 'Ristretto';
+             break;
+           case 1:
+             return 'Espresso';
+             break;
+           case 2:
+             return 'Long';
+             break;
+           case 3:
+             return 'Americano';
+             break;
+           case 4:
+             return 'Largo';
+             break;
+           case 5:
+             return 'Capuccino';
+             break;
+           default:
+             return 'Coffee';
+        }
+      },
+      computeCurrent: function(changes) {
+        if (this.pendings && this.pendings.length > 0) {
+          changes.indexSplices.forEach(function(s) {
+             for (var i=0; i<s.addedCount; i++) {
+               var index = s.index + i;
+               var pending = s.object[index];
+             }
+           }, this);
+          return this.pendings[0];
+        }
+        return {};
+      },
+      getPending: function(changes) {
+        if (this.pendings && this.pendings.length > 0)
+          return this.pendings.length - 1;
+        return 0;
+      }
     });
   </script>
 </dom-module>

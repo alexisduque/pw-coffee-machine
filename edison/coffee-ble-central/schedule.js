@@ -15,6 +15,8 @@ module.exports = function (user) {
     console.log(chalk.underline.bgGreen('Taste:') + ' ' + data.taste);
     console.log(chalk.underline.bgGreen('PW Enabled:') + ' ' + data.pwEnabled);
     console.log(chalk.underline.bgGreen('Cup:') + ' ' + data.cup);
+    console.log(chalk.underline.bgGreen('Milk:') + ' ' + data.milk);
+    console.log(chalk.underline.bgGreen('Sugar:') + ' ' + data.sugar);
     console.log();
   } else {
     console.log(chalk.underline.bgRed('Invalid JSON: ' + data));
@@ -25,7 +27,9 @@ module.exports = function (user) {
     user: data.user,
     date: new Date().getTime(),
     type: data.taste,
-    cup: data.cup
+    cup: data.cup,
+    milk: data.milk,
+    sugar: data.sugar
   });
   var headers = {
     'Content-Type': 'application/json',
