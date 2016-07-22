@@ -171,17 +171,34 @@
 
     <firebase-query
       id="pendingsQuery"
-      log="true"
       app-name="physical-web-coffee"
       path="pending"
       data="{{ pendings }}">
     </firebase-query>
+
+    <firebase-query
+      id="notificationsQuery"
+      app-name="physical-web-coffee"
+      path="[[pending.uid]]/subscription"
+      data="{{ notifications }}">
+    </firebase-query>
+
     <firebase-document
       id="pendingsDoc"
       app-name="physical-web-coffee"
       log="true">
     </firebase-document>
-
+    <iron-ajax
+        id="push"
+        method='POST'
+        content-type="application/json"
+        on-response='handlePushResponse'
+        headers='{"Authorization": "key=AIzaSyDkgbBA2Hc1U94c0cssPhO3v0Qj_KABQPs"}'
+        url="https://android.googleapis.com/gcm/send"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
   </template>
 
   <script>
@@ -288,6 +305,10 @@
       },
       deletePending: function() {
         var key = this.pending.$key;
+        if (this.notifications) {
+          console.log(this.notifications)
+          this.notifications.forEach(this.sendNotification);
+        }
         this.$.pendingsDoc.data = null;
         this.$.pendingsDoc.save('pending', key).then(this.$.pendingsQuery.refresh)
       },
@@ -341,8 +362,7 @@
         }
       },
       setTimer: function(pending) {
-        //var duration = pending.cup * 40;
-        var duration = 3;
+        var duration = pending.cup * 40;
         this.$.counter.seconds = duration;
         this.$.counter.start();
         this.listen(this.$.counter, 'animated-countdown-finish', 'onCoffeeReady');
@@ -350,6 +370,15 @@
       onCoffeeReady: function(event) {
         console.log('Coffee ready !!');
         this.deletePending();
+      },
+      sendNotification: function(notification) {
+        var push = document.getElementById('push');
+        var content = '{"to": "' + notification.$key+ '"}';
+        push.body = content;
+        push.generateRequest();
+      },
+      handlePushResponse: function (response) {
+        console.log('push response: ' + response);
       }
     });
   </script>
