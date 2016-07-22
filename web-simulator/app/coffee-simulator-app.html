@@ -112,7 +112,7 @@
           <div class="mycard-content">
             <div class="card-content">
               <div class="card-header">Status</div>
-              <div id="status"></div>
+              <div id="status">The coffee machine is <b>idle</b></div>
               <div class="card-name">Pendings : <b>{{ pendingCount }}</b></div>
             </div>
             <div class="card-actions">
@@ -122,7 +122,7 @@
                 class="inline"
                 seconds="45"
                 end-text="Your coffee is ready !"
-                start-text="Preparing…"
+                start-text="Machine is idle"
                 autostart-delay="2000">
               </animated-countdown>
             </div>
@@ -147,11 +147,9 @@
             <div class="card-content">
               <div class="card-header">Sugar</div>
               <div class="card-name">Quantity (spoon)</div>
-              <div>Live from space</div>
-
             </div>
             <div id="sugar" class="card-actions">
-                <paper-icon-button class="card-icon" icon="star"></paper-icon-button>
+                <paper-icon-button hidden class="card-icon" icon="star"></paper-icon-button>
             </div>
           </div>
           <div class="sugar-image"></div>
@@ -172,11 +170,17 @@
     </app-header-layout>
 
     <firebase-query
-      id="pending-query"
+      id="pendingsQuery"
+      log="true"
       app-name="physical-web-coffee"
       path="pending"
       data="{{ pendings }}">
     </firebase-query>
+    <firebase-document
+      id="pendingsDoc"
+      app-name="physical-web-coffee"
+      log="true">
+    </firebase-document>
 
   </template>
 
@@ -254,18 +258,26 @@
       },
       computeCurrent: function(changes) {
         if (this.pendings && this.pendings.length > 0) {
+          if (!this.pendings[0].cup) {
+            delete this.pendings[0];
+          }
           changes.indexSplices.forEach(function(s) {
              for (var i=0; i<s.addedCount; i++) {
                var index = s.index + i;
                var pending = s.object[index];
              }
            }, this);
+           this.displayMilk(this.pendings[0]);
+           this.displayCup(this.pendings[0]);
+           this.displaySugar(this.pendings[0]);
+           this.displayStatus(this.pendings[0]);
+           this.setTimer(this.pendings[0]);
+           return this.pendings[0];
+        } else if (this.pending) {
           this.displayMilk(this.pendings[0]);
           this.displayCup(this.pendings[0]);
           this.displaySugar(this.pendings[0]);
           this.displayStatus(this.pendings[0]);
-          this.setTimer(this.pendings[0]);
-          return this.pendings[0];
         }
         return {};
       },
@@ -274,54 +286,70 @@
           return this.pendings.length - 1;
         return 0;
       },
+      deletePending: function() {
+        var key = this.pending.$key;
+        this.$.pendingsDoc.data = null;
+        this.$.pendingsDoc.save('pending', key).then(this.$.pendingsQuery.refresh)
+      },
       displayMilk: function(pending) {
+        if (!this.$.milk.children[0]) return;
         var milkNode = this.$.milk.children[0].cloneNode(true)
         var milk = this.$.milk;
         milkNode.removeAttribute('hidden');
-        while (milk.hasChildNodes())
+        while (milk.hasChildNodes() && milk.children.length > 1)
           milk.removeChild(milk.lastChild);
-        for (var i = 0; i < pending.milk; i++) {
-          var appended = milkNode.cloneNode(true);
-          milk.appendChild(appended);
+        if (pending) {
+          for (var i = 0; i < pending.milk; i++) {
+            var appended = milkNode.cloneNode(true);
+            milk.appendChild(appended);
+          }
         }
       },
       displayCup: function(pending) {
+        if (!this.$.cup.children[0]) return;
         var cupNode = this.$.cup.children[0].cloneNode(true)
         var cup = this.$.cup;
         cupNode.removeAttribute('hidden');
-        while (cup.hasChildNodes())
+        while (cup.hasChildNodes() && cup.children.length > 1)
           cup.removeChild(cup.lastChild);
-        for (var i = 0; i < pending.cup; i++) {
-          var appended = cupNode.cloneNode(true);
-          cup.appendChild(appended);
+        if (pending) {
+          for (var i = 0; i < pending.cup; i++) {
+            var appended = cupNode.cloneNode(true);
+            cup.appendChild(appended);
+          }
         }
       },
       displaySugar: function(pending) {
+        if (!this.$.sugar.children[0]) return;
         var sugarNode = this.$.sugar.children[0].cloneNode(true)
         var sugar = this.$.sugar;
         sugarNode.removeAttribute('hidden');
-        while (sugar.hasChildNodes())
+        while (sugar.hasChildNodes() && sugar.children.length > 1)
           sugar.removeChild(sugar.lastChild);
-        for (var i = 0; i < pending.sugar; i++) {
-          var appended = sugarNode.cloneNode(true);
-          sugar.appendChild(appended);
+        if (pending) {
+          for (var i = 0; i < pending.sugar; i++) {
+            var appended = sugarNode.cloneNode(true);
+            sugar.appendChild(appended);
+          }
         }
       },
       displayStatus: function(pending) {
         if (pending && pending.user)  {
           this.$.status.innerHTML = 'Preparing <b>' + pending.user + '\'s</b> coffee.'
         } else {
-          this.$.status.innerHTML = 'Th coffee machine is <b>iddle</b>'
+          this.$.status.innerHTML = 'The coffee machine is <b>idle</b>'
         }
       },
       setTimer: function(pending) {
-        var duration = pending.cup * 40;
+        //var duration = pending.cup * 40;
+        var duration = 3;
         this.$.counter.seconds = duration;
         this.$.counter.start();
         this.listen(this.$.counter, 'animated-countdown-finish', 'onCoffeeReady');
       },
       onCoffeeReady: function(event) {
         console.log('Coffee ready !!');
+        this.deletePending();
       }
     });
   </script>
