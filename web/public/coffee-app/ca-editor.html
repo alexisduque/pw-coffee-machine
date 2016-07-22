@@ -90,7 +90,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       milk="{{note.milk}}"
       sugar="{{note.sugar}}"
       body="{{note.body}}"
-      user="[[user]]"  editable>
+      uid="[[user.uid]]"
+      user="[[user.displayName]]"  editable>
     </ca-note>
     <div class="controls">
       <paper-button on-tap="delete">Delete</paper-button>
@@ -136,7 +137,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           milk: 0,
           sugar: 0,
           hot: true,
-          user: this.user,
+          uid: this.user.uid,
+          user: this.user.displayName,
           taste: 2,
           hotDuration: 2
         };

@@ -8,7 +8,7 @@ module.exports = {
   self: this,
   user: {
     'coffee': {
-      '-KM9Gu0-PbP4_g25cDnp': {
+      '-KNHJ61GYK4VJ5d6dUaN': {
         'body': '',
         'cup': 10,
         'hot': true,
@@ -16,7 +16,8 @@ module.exports = {
         'pwEnabled': true,
         'taste': 2,
         'title': 'Your coffee machine configuration',
-        'user': 'Alexis Duque'
+        'user': 'Alexis Duque',
+        'user_uid': 'NV3qodvAKLW7Iiwh29BvcWAw4UH3'
       }
     },
     'subscription': {

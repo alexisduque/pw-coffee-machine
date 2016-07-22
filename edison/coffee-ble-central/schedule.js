@@ -17,6 +17,7 @@ module.exports = function (user) {
     console.log(chalk.underline.bgGreen('Cup:') + ' ' + data.cup);
     console.log(chalk.underline.bgGreen('Milk:') + ' ' + data.milk);
     console.log(chalk.underline.bgGreen('Sugar:') + ' ' + data.sugar);
+    console.log(chalk.underline.bgGreen('Uid:') + ' ' + data.uid);
     console.log();
   } else {
     console.log(chalk.underline.bgRed('Invalid JSON: ' + data));
@@ -25,6 +26,7 @@ module.exports = function (user) {
   }
   var bodyString = JSON.stringify({
     user: data.user,
+    uid: data.uid,
     date: new Date().getTime(),
     type: data.taste,
     cup: data.cup,
