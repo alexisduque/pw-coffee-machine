@@ -4,13 +4,13 @@ Coffee machine hardware modifications
 This document explains how you can easily modificate a cheap filter coffe maker and inteface it with the Intel Edison beakout board.
 
 ## Material
-* Intel Edison Breakout board
-* Breadboard
-* 5V 10A Relay module (optocoupled)
-* 2 Transistor BC547
-* 2 Diodes 1N4148
-* 2 LEDs (facultative)
-* Wires, headeres, soldering iron
+* Intel Edison Breakout board [(Here)](http://fr.farnell.com/intel/edi2bb-al-k/x86-edison-breakout-board-kit/dp/2499336)
+* Breadboard [(Here)](http://fr.farnell.com/multicomp/mcbb400/carte-proto-sans-soudure-300v/dp/2395961?MER=BN-2395961)
+* 5V 10A Relay module (optocoupled) [(Here)](http://fr.farnell.com/multicomp/bc547b/transistor-npn-to-92/dp/1574381?COM=main-search%20CMPNULL)
+* 2 Transistor BC547 [(Here)](http://fr.farnell.com/multicomp/bc547b/transistor-npn-to-92/dp/1574381?COM=main-search%20CMPNULL)
+* 2 Diodes 1N4148 [(Here)](http://fr.farnell.com/vishay/1n4148-tr/diode-de-redressement-standard/dp/1469384)
+* 2 LEDs (facultative) [(Here)](http://fr.farnell.com/broadcom-limited/hlmp-3507/led-5mm-vert/dp/1003214?MER=BN-1003214)
+* Wires, headers, soldering iron
 
 ## Step 1 : Prepare the Edison board
 The Intel Edison Breakout board exposes Edison GPIOs to the bottom of the board. Besides, it comes without headers pins and you need to add them by yourself.
