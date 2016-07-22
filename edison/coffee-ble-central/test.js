@@ -30,6 +30,8 @@ module.exports = {
   userForSchedule: {
     'coffee': {
       'body': '',
+      'milk': 3,
+      'sugar': 4,
       'cup': 10,
       'hot': true,
       'hotDuration': 20,
