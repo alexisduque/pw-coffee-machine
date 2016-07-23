@@ -56,7 +56,7 @@ if (process.env.TEST !== '1') {
 }
 noble.on('stateChange', function (state) {
   if (state === 'poweredOn') {
-    noble.startScanning(['fed8'], true);
+    noble.startScanning(['fed8', 'feaa'], true);
   } else {
     noble.stopScanning();
   }

@@ -59,7 +59,7 @@
         <paper-fab
           id="bluetooth"
           icon="settings-bluetooth"
-          on-click="connect"
+          on-click="connectV2"
           class="bluetooth"
           hidden$="[[_bluetoothDisabled(notes.*, user)]]"
           aria-label="Configure Beacon">
@@ -180,6 +180,14 @@
         </platinum-bluetooth-characteristic>
       </platinum-bluetooth-service>
     </platinum-bluetooth-device>
+    <platinum-bluetooth-device id="bluetoothDeviceV2"
+     services-filter='["ee0c2080-8786-40ba-ab96-99b91ac981d8"]'
+     optional-services-filter="['ee0c2080-8786-40ba-ab96-99b91ac981d8']">
+      <platinum-bluetooth-service service='ee0c2080-8786-40ba-ab96-99b91ac981d8'>
+        <platinum-bluetooth-characteristic id="charData" characteristic='ee0c2084-8786-40ba-ab96-99b91ac981d8'>
+        </platinum-bluetooth-characteristic>
+      </platinum-bluetooth-service>
+    </platinum-bluetooth-device>
   </template>
   <script>
     window.toHexString = function(dataview) {
@@ -292,7 +300,7 @@
       get notify(){
         return this.$.push.enabled;
       },
-      updateBeacon: function(shortUrl){
+      updateBeaconV1: function(shortUrl){
         var dataOne = this.$.charDataOne;
         var dataTwo = this.$.charDataTwo;
         var shortUrl = this.shortUrl.value;
@@ -329,6 +337,26 @@
         console.log('length: ' + dataLength);
         return [dv, dv2, dv3]
       },
+      updateBeaconV2: function(shortUrl){
+        var data = this.$.charData;
+        var shortUrl = this.shortUrl.value;
+        if (!shortUrl) {
+          return;
+        }
+        url = shortUrl.substr(8);
+        var bufLength = url.length + 1;
+        var buffer = new ArrayBuffer(bufLength);
+        var dv = new DataView(buffer, 0)
+        var i = 1;
+        // https:// Eddystone URL prefix code
+        dv.setUint8(0, 0x03);
+        while( i < bufLength ) {
+          dv.setUint8(i, url.charCodeAt(i-1));
+          i++;
+        }
+        var dv = new DataView(buffer, 0)
+        return dv;
+      },
       _createDisabled: function(notes, user) {
         return !(this.online && notes.value.length === 0)
       },
@@ -351,7 +379,7 @@
         var dataOne = this.$.charDataOne;
         var dataTwo = this.$.charDataTwo;
         var dataLength = this.$.charDataLength;
-        var values = this.updateBeacon();
+        var values = this.updateBeaconV1();
         bluetoothDevice.request().then(function(device) {
           return dataOne.write(values[0].buffer);
         })
@@ -360,6 +388,24 @@
         })
         .then(function() {
           return dataLength.write(values[2].buffer);
+        })
+        .then(function() {
+          document.querySelector('coffee-app')
+            .fire('bluetoothend', {message: 'Physical Web beacon configured.'});
+          bluetoothDevice.disconnect();
+        })
+        .catch(function(error) {
+          document.querySelector('coffee-app').fire('bluetoothend',{error: error});
+          bluetoothDevice.disconnect();
+          bluetoothDevice.reset();
+        });
+      },
+      connectV2: function() {
+        var bluetoothDevice = this.$.bluetoothDeviceV2;
+        var data = this.$.charData;
+        var value = this.updateBeaconV2();
+        bluetoothDevice.request().then(function(device) {
+          return data.write(value.buffer);
         })
         .then(function() {
           document.querySelector('coffee-app')
