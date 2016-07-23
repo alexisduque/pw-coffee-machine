@@ -82,6 +82,18 @@
         background: url('../images/milk.jpg');
         background-size: cover;
     }
+    .animated-image {
+        width: 200px;
+        height: 170px;
+        background: url('../images/coffee-animated.gif');
+        background-size: cover;
+    }
+    .idle-image {
+        width: 200px;
+        height: 170px;
+        background: url('../images/coffee-nanimated.png');
+        background-size: cover;
+    }
     .mycard-content {
       @apply(--layout-flex);
       float: left;
@@ -127,6 +139,7 @@
               </animated-countdown>
             </div>
           </div>
+          <div class$="[[ stateClass(pending) ]]"></div>
         </paper-card>
         <br>
         <paper-card class="card">
@@ -400,6 +413,13 @@
       },
       handlePushResponse: function (response) {
         console.log('push response: ' + response);
+      },
+      stateClass: function(pending){
+        if (pending && pending.cup) {
+          return 'animated-image';
+        } else {
+          return 'idle-image';
+        }
       }
     });
   </script>
