@@ -72,19 +72,41 @@ noble.on('scanStop', function () {
   console.log();
   led.stop();
 });
+
+var resetMachine = new Promise(function (resolve, reject) {
+  setTimeout(resolve, resetInterval * 1000);
+});
+resetMachine.then(function () {
+  console.log(chalk.underline.bgYellow('Machine reset'));
+  brewScheduled = false;
+  objects = [];
+});
+
 noble.on('discover', function (peripheral) {
   var serviceData = peripheral.advertisement.serviceData;
-  console.log(chalk.dim('Device found: ' + peripheral.address));
-  if (serviceData && serviceData.length && !brewScheduled) {
+  var object = {};
+  if (serviceData && serviceData.length) {
     for (var i in serviceData) {
       // check if Eddystone-URL
       var hexData = serviceData[i].data.toString('hex');
       if (hexData.substr(0, 2) === '10') {
         var url = urldecode(hexData);
-        var object = { 'url': url };
+        object = { 'device': peripheral.address, 'url': url, 'brewed': false };
       }
     }
-    if (object && !objects.length && !brewScheduled) {
+    if (!object.url) {
+      console.log(chalk.dim('Device found but not a Eddystone URL: ' + peripheral.address));
+      return;
+    }
+    var found = false;
+    for(var j = 0; j < objects.length; j++) {
+      if (objects[j].device === object.device) {
+          found = true;
+          console.log(chalk.dim('Eddystone URL found but allread scheduled: ' + peripheral.address));
+          break;
+      }
+    }
+    if (!found) {
       objects.push(object);
       userdata(objects[0]).then(function (user) {
         var coffee = user.coffee;
@@ -94,36 +116,12 @@ noble.on('discover', function (peripheral) {
           console.log(chalk.underline.bgGreen('Coffee is brewing !'));
           schedule(user).then(function (data) {
             scheduledCoffee.push(data);
-          });
-          brewScheduled = true;
-          keepHot = data.hot ? data.hotDuration * 60 : 0;
-          brewDuration = data.cup * 20  + keepHot;
-          relay.on();
-          led.stop();
-          led.on();
-          brew = new Promise(function (resolve, reject) {
-            setTimeout(resolve, brewDuration * 1000);
-          });
-          resetMachine = new Promise(function (resolve, reject) {
-            setTimeout(resolve, resetInterval * 1000);
-          });
-          brew.then(function () {
-            console.log(chalk.underline.bgGreen('Coffee Ready !'));
-            relay.off();
-            led.off();
-            led.blink();
-            var schedule = scheduledCoffee.shift();
-            var coffeeId = schedule.scheduleId;
-            push(schedule);
-            notify(coffeeId);
-          });
-          resetMachine.then(function () {
-            console.log(chalk.underline.bgYellow('Machine reset'));
-            brewScheduled = false;
-            objects.pop();
+            if (!brewScheduled && process.env.SIM !== '1'){
+              processCoffee();
+            }
           });
         } else {
-          objects.pop();
+          objects.shift();
         }
       }).catch(function (e) {
         objects.pop();
@@ -133,3 +131,40 @@ noble.on('discover', function (peripheral) {
     }
   }
 });
+
+var processCoffee = function() {
+  brewScheduled = true;
+  console.log(chalk.underline.bgGreen('Processing Coffee'));
+    var schedule = scheduledCoffee.shift();
+    var data = schedule.user.coffee;
+    if (!data.hot ) {
+      console.log(chalk.underline.bgYellow('Skipped'));
+      brewScheduled = false;
+      return;
+    }
+    keepHot = data.hot ? data.hotDuration * 60 : 0;
+    brewDuration = data.cup * 20  + keepHot;
+    relay.on();
+    led.stop();
+    led.on();
+    brew = new Promise(function (resolve, reject) {
+      setTimeout(resolve, brewDuration * 1000);
+    });
+    brew.then(function () {
+      console.log(chalk.underline.bgGreen('Coffee Ready !'));
+      relay.off();
+      led.off();
+      led.blink();
+      var coffeeId = schedule.scheduleId;
+      push(schedule);
+      notify(coffeeId);
+      var object = objects.shift();
+      object.brewed = true;
+      objects.push(object);
+      if (scheduledCoffee.length > 0) {
+        processCoffee();
+      } else {
+        brewScheduled = false;
+      }
+    });
+};
