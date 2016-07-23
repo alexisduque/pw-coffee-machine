@@ -16,7 +16,8 @@
     "polymer": "Polymer/polymer#^1.2.0",
     "app-layout": "PolymerElements/app-layout#^0.10.0",
     "paper-fab": "PolymerElements/paper-fab#^1.2.0",
-    "animated-countdown": "kcmr/animated-countdown#^0.2.3"
+    "animated-countdown": "kcmr/animated-countdown#^0.2.3",
+    "platinum-push-messaging": "PolymerElements/platinum-push-messaging#^1.0.5"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

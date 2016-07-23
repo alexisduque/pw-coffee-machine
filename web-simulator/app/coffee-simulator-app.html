@@ -188,8 +188,9 @@
       app-name="physical-web-coffee"
       log="true">
     </firebase-document>
+
     <iron-ajax
-        id="push"
+        id="pushApi"
         method='POST'
         content-type="application/json"
         on-response='handlePushResponse'
@@ -199,6 +200,11 @@
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
+
+    <platinum-push-messaging id="push"
+      title="Coffee Ready"
+      icon-url="images/icon-1x.png">
+    </platinum-push-messaging>
   </template>
 
   <script>
@@ -232,6 +238,9 @@
       observers: [
         '_pendingsChanged(pendings.splices)'
       ],
+      ready: function() {
+        this.$.push.enable().then(() => { console.log('Push Enabled')});
+      },
       _pendingsChanged: function(changeRecord) {
         if (changeRecord) {
           changeRecord.indexSplices.forEach(function(s) {
@@ -289,7 +298,17 @@
            this.displaySugar(this.pendings[0]);
            this.displayStatus(this.pendings[0]);
            this.setTimer(this.pendings[0]);
+
+           changes.indexSplices.forEach(function(s) {
+              s.removed.forEach(function(pending) {
+                 console.log(pending.user + ' was removed');
+                 if (this.pending.$key == pending.$key)
+                 this.$.counter.resetCounter()
+               }, this);
+            }, this);
+
            return this.pendings[0];
+
         } else if (this.pending) {
           this.displayMilk(this.pendings[0]);
           this.displayCup(this.pendings[0]);
@@ -309,6 +328,7 @@
           console.log(this.notifications)
           this.notifications.forEach(this.sendNotification);
         }
+        this.$.push.testPush('Coffee is ready');
         this.$.pendingsDoc.data = null;
         this.$.pendingsDoc.save('pending', key).then(this.$.pendingsQuery.refresh)
       },
@@ -317,8 +337,9 @@
         var milkNode = this.$.milk.children[0].cloneNode(true)
         var milk = this.$.milk;
         milkNode.removeAttribute('hidden');
-        while (milk.hasChildNodes() && milk.children.length > 1)
+        while (milk.hasChildNodes() && milk.children.length > 1) {
           milk.removeChild(milk.lastChild);
+        }
         if (pending) {
           for (var i = 0; i < pending.milk; i++) {
             var appended = milkNode.cloneNode(true);
@@ -372,10 +393,10 @@
         this.deletePending();
       },
       sendNotification: function(notification) {
-        var push = document.getElementById('push');
+        var pushApi = document.getElementById('pushApi');
         var content = '{"to": "' + notification.$key+ '"}';
-        push.body = content;
-        push.generateRequest();
+        pushApi.body = content;
+        pushApi.generateRequest();
       },
       handlePushResponse: function (response) {
         console.log('push response: ' + response);
