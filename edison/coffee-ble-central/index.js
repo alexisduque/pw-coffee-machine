@@ -1,3 +1,7 @@
+// Set this envars to be able to detect the beacon again
+// when it changes its apparence and local_name
+process.env.NOBLE_REPORT_ALL_HCI_EVENTS=1
+
 var noble = require('noble');
 var chalk = require('chalk');
 var push = require('./push.js');
@@ -100,7 +104,7 @@ noble.on('discover', function (peripheral) {
     }
     var found = false;
     for(var j = 0; j < objects.length; j++) {
-      if (objects[j].device === object.device) {
+      if (objects[j].device === object.device && objects[j].url === object.url) {
           found = true;
           console.log(chalk.dim('Eddystone URL found but allread scheduled: ' + peripheral.address));
           break;
@@ -124,8 +128,8 @@ noble.on('discover', function (peripheral) {
           objects.shift();
         }
       }).catch(function (e) {
-        objects.pop();
-        console.log(chalk.underline.bgRed('Error: ' + e));
+        objects.shift();
+        console.log(chalk.underline.bgRed('Eddystone URL found but unable to retrieve valid coffee settings: ' + e ));
         console.log();
       });
     }
