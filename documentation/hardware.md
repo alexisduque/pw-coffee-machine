@@ -51,3 +51,7 @@ Finally, wire the control circuit, to interface the Intel Edison GPIO with the r
 
 Your Intel Edison board can now controle the coffee maker
 ![](./images/edison-coffee_bb.png)
+
+
+
+####  Since you ensure everithings works, next step is building a tiny case for the Intel EDISON and the circuit following this [tutorial](./casing.md)
