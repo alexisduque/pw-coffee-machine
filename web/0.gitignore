@@ -1,5 +1,3 @@
-app/config.js
-app/bower_components/
 node_modules
 dist
 bower_components
