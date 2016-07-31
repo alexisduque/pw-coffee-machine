@@ -327,6 +327,7 @@
           this.displayCup(this.pendings[0]);
           this.displaySugar(this.pendings[0]);
           this.displayStatus(this.pendings[0]);
+          this.resetTimer();
         }
         return {};
       },
@@ -400,6 +401,12 @@
         this.$.counter.seconds = duration;
         this.$.counter.start();
         this.listen(this.$.counter, 'animated-countdown-finish', 'onCoffeeReady');
+      },
+      resetTimer: function() {
+        var duration = 0;
+        this.$.counter.seconds = duration;
+        this.$.counter.reset();
+        this.unlisten(this.$.counter, 'animated-countdown-finish', 'onCoffeeReady');
       },
       onCoffeeReady: function(event) {
         console.log('Coffee ready !!');
