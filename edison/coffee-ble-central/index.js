@@ -146,7 +146,7 @@ var processCoffee = function() {
       brewScheduled = false;
       return;
     }
-    keepHot = data.hot ? data.hotDuration * 60 : 0;
+    keepHot = data.hot ? data.hotDuration * 0 : 0;
     brewDuration = data.cup * 20  + keepHot;
     relay.on();
     led.stop();

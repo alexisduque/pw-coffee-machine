@@ -397,8 +397,9 @@
         }
       },
       setTimer: function(pending) {
-        var duration = pending.cup * 40;
-        this.$.counter.seconds = duration;
+        var duration = pending.cup * 20;
+        var keepHot = pending.hot ? pending.hotDuration * 60 : 0;
+        this.$.counter.seconds = duration + keepHot;
         this.$.counter.start();
         this.listen(this.$.counter, 'animated-countdown-finish', 'onCoffeeReady');
       },
