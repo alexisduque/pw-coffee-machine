@@ -141,12 +141,12 @@ var processCoffee = function() {
   console.log(chalk.underline.bgGreen('Processing Coffee'));
     var schedule = scheduledCoffee.shift();
     var data = schedule.user.coffee;
-    if (!data.hot ) {
-      console.log(chalk.underline.bgYellow('Skipped'));
+    if (data.taste !== 3 ) {
+      console.log(chalk.underline.bgYellow('Not an american - skipped'));
       brewScheduled = false;
       return;
     }
-    keepHot = data.hot ? data.hotDuration * 0 : 0;
+    keepHot = data.hot ? data.hotDuration * 60 : 0;
     brewDuration = data.cup * 20  + keepHot;
     relay.on();
     led.stop();
