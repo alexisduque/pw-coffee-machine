@@ -112,7 +112,7 @@ noble.on('discover', function (peripheral) {
     }
     if (!found) {
       objects.push(object);
-      userdata(objects[0]).then(function (user) {
+      userdata(object).then(function (user) {
         var coffee = user.coffee;
         console.log(JSON.stringify(coffee));
         var data = coffee;
