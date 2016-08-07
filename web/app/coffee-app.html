@@ -43,14 +43,18 @@
           hidden$="[[_createDisabled(notes.*, user)]]"
           aria-label="Add note">
         </paper-fab>
-        <paper-fab
-          id="bluetooth"
-          icon="settings-bluetooth"
-          on-click="connectV2"
-          class="bluetooth"
+        <paper-fab-menu id="ble-menu"
           hidden$="[[_bluetoothDisabled(notes.*, user)]]"
-          aria-label="Configure Beacon">
-        </paper-fab>
+          icon="settings-bluetooth"
+          position="vertical"
+          class="bluetooth-v1">
+            <paper-fab-menu-item class="bluetooth-v1 label"
+              label="Beacon v1" icon="image:exposure-plus-1"
+                on-click="connect"></paper-fab-menu-item>
+            <paper-fab-menu-item color="#4CAF50" icon="image:exposure-plus-2"
+              class="bluetooth" label="Beacon v2"
+              on-click="connectV2" ></paper-fab-menu-item>
+        </paper-fab-menu>
         <ca-editor
           id="editor"
           note="{{editableNote}}"

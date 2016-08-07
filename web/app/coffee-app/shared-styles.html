@@ -41,10 +41,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         right: 1em;
       }
 
-      paper-fab.bluetooth{
+      paper-fab-menu {
         --paper-fab-background: var(--paper-blue-500);
         position: absolute;
         bottom: 1em;
+        right: 1em;
+        z-index: 2;
+      }
+
+      paper-fab-menu-item.bluetooth {
+        --color: var(--paper-blue-500);
+      }
+
+      paper-fab.bluetooth-v1{
+        --paper-fab-background: var(--paper-green-500);
+        position: absolute;
+        bottom: 5em;
         right: 1em;
         z-index: 2;
       }
