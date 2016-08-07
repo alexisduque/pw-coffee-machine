@@ -70,6 +70,12 @@
         background: url('../images/espresso.jpg');
         background-size: cover;
     }
+    .american-image {
+        width: 200px;
+        height: 170px;
+        background: url('../images/american.jpg');
+        background-size: cover;
+    }
     .sugar-image {
         width: 200px;
         height: 170px;
@@ -153,7 +159,7 @@
               <paper-icon-button hidden class="card-icon" icon="maps:local-cafe"></paper-icon-button>
             </div>
           </div>
-          <div class="coffee-image"></div>
+          <div class$="[[ typeClass(pending) ]]"></div>
         </paper-card>
         <paper-card class="card">
           <div class="mycard-content">
@@ -427,6 +433,13 @@
           return 'animated-image';
         } else {
           return 'idle-image';
+        }
+      },
+      typeClass: function(pending){
+        if (pending && pending.type == 3) {
+          return 'american-image';
+        } else {
+          return 'coffee-image';
         }
       }
     });

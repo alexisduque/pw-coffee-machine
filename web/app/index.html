@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -22,7 +22,10 @@
     </style>
 </head>
 
-<body>
+<body unresolved>
+    <!-- build:remove -->
+    <span id="browser-sync-binding"></span>
+    <!-- endbuild -->
     <platinum-sw-register auto-register skip-waiting clients-claim reload-on-install href="sw-import.js">
         <platinum-sw-cache cache-config-file="cache-config.json" default-cache-strategy="networkFirst">
         </platinum-sw-cache>

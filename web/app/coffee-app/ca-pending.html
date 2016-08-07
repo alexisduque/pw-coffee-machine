@@ -32,9 +32,15 @@
         @apply(--layout-horizontal);
       }
       .pending-image {
-        width: 120px;
+        width: 95px;
         height: 170px;
         background: url('../images/espresso.jpg');
+        background-size: cover;
+      }
+      .pending-american-image {
+        width: 95px;
+        height: 170px;
+        background: url('../images/american.jpg');
         background-size: cover;
       }
       .pending-content {
@@ -79,7 +85,7 @@
                 <iron-icon icon="alarm"></iron-icon>
               </div>
             </div>
-            <div class="pending-image"></div>
+            <div class$="[[ _typeClass(coffee) ]]"></div>
           </paper-card>
         </template>
       </div>
@@ -116,7 +122,7 @@
             return 'Long';
             break;
           case 3:
-            return 'Americano';
+            return 'American';
             break;
           case 4:
             return 'Largo';
@@ -128,7 +134,13 @@
             return 'Coffee';
         }
       },
-
+      _typeClass: function(coffee){
+        if (coffee && coffee.type == 3) {
+          return 'pending-american-image';
+        } else {
+          return 'pending-image';
+        }
+      },
       _userHidden(coffeeUser) {
         if (!this.user) return;
         return !(this.user.displayName === coffeeUser);
