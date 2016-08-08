@@ -54,4 +54,4 @@ Your Intel Edison board can now controle the coffee maker
 
 
 
-####  Since you ensure everithings works, next step is building a tiny case for the Intel EDISON and the circuit following this [tutorial](./casing.md)
+### Since you ensure everythings works, next step is building a tiny case for the Intel EDISON and the circuit following this [tutorial](./casing.md)

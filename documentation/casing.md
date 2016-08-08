@@ -3,7 +3,7 @@ Build a tiny 'prod ready' case for the circuit and the Intel Edison
 
 This document explains how you can put the huge and unconvenient breaboard and wires into an handy case you just have to connect to your coffee maker.
 
-<img src="images/casing.jpg" width="400">
+<img src="images/casing.jpg" width="250" style="padding: 10px 0px 10px 0px">
 
 ## Material
 
@@ -31,28 +31,33 @@ After placing a component, bend its leads to make it stay in place when you turn
 
 Solder all the components to the stripboard and make sure you have good solder joints all over.
 
-<img src="./images/solder.jpg" width="400">
+<img src="./images/solder.jpg" width="250" style="padding: 10px 0px 10px 0px">
+
 
 It’s very rare that you get all the connections you need just by using the strips on the board. So you will have to add some wires to create the remaining connections.
 
 Create small wires by using a wire cutter. Cut a suitable length of wire and remove the isolation from both ends. This can be a bit hard with very short wires, so use longer ones if you have to.
 
-<img src="./images/7.jpg" width="400">
+<img src="./images/7.jpg" width="250" style="padding: 10px 0px 10px 0px">
 
 ## Step 2 : Prepare the Relay module and place it into the Coffee maker (~ 30 min)
 
 Cut the phase wire, which is the brown one in the Step 2 picture.
 Then, connect each end to the relay module, as in the next picture. The relay module will act as a switch, you can control with the Edison board.
 
-<img src="./images/1.jpg" width="400">
-<img src="./images/3.jpg" width="400">
+<img src="./images/1.jpg" width="250" style="padding: 10px 0px 10px 0px">
+<img src="./images/3.jpg" width="250" style="padding: 10px 0px 10px 0px">
 
 ### Use adhesive tape to isolate the relay module
-<img src="./images/4.jpg" width="400">
-<img src="./images/5.jpg" width="400">
+
+
+<img src="./images/4.jpg" width="250" style="padding: 10px 0px 10px 0px">
+<img src="./images/5.jpg" width="250" style="padding: 10px 0px 10px 0px">
 
 ### Finally, place the relay inside the Coffee Maker power block
-<img src="./images/6.jpg" width="400">
+
+
+<img src="./images/6.jpg" width="250" style="padding: 10px 0px 10px 0px">
 
 
 ## Step 3 : Perforate the enclosure (~ 15 min)
@@ -70,9 +75,9 @@ Using wires, as in next pictures, connect to the PCB:
 - the Edison GPIO that will controle the coffee maker
 - the Edison GND GPIO
 
-<img src="./images/8.jpg" width="400">
-<img src="./images/9.jpg" width="400">
+<img src="./images/8.jpg" width="250" style="padding: 10px 0px 10px 0px">
+<img src="./images/9.jpg" width="250" style="padding: 10px 0px 10px 0px">
 
 ## Step 4 : Finally, connect the case to the coffee maker (~ 5min)
 
-<img src="./images/10.jpg" width="400">
+<img src="./images/10.jpg" width="250" style="padding: 10px 0px 10px 0px">
