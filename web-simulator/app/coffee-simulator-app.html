@@ -404,6 +404,7 @@
       },
       setTimer: function(pending) {
         var duration = pending.cup * 20;
+        if (pending.type == 3) duration = pending.cup * 60;
         var keepHot = pending.hot ? pending.hotDuration * 60 : 0;
         this.$.counter.seconds = duration + keepHot;
         this.$.counter.start();
