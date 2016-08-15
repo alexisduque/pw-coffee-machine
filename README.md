@@ -22,7 +22,7 @@ Then, opening the app on your smartphone, you can just by one click, configure y
 Right now, just draw near a compatible coffee maker with your beacon and let it do the job for you!
 As soon as you coffee is ready, you will receive a push notification, telling you, you can take it. Also, if you are in a bar or at work, and a couple of coffees are scheduled, the app lets you see in real time your position in the queue.
 
-<img align="left" src="./documentation/images/pw-coffee-maker.jpg" hspace="30" width="250" style="float: right">
+<img align="right" src="./documentation/images/pw-coffee-maker.jpg" hspace="30" width="250" style="float: right">
 
 The project includes an [electronic circuit design](documentation/hardware.md), to interface a sanard coffee maker with the Intel Edison breakout board which support Bluetooth Low Energy, and Wifi.
 
