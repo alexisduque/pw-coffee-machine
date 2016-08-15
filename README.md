@@ -1,5 +1,5 @@
 ## Google Summer of Code 2016
-Project Smart Coffee Machine with proximity pairing
+Project Smart Coffee Machine with proximity pairing [(link)]()https://summerofcode.withgoogle.com/projects/#5774414150893568
 
 Student Alexis Duque
 
@@ -24,7 +24,7 @@ As soon as you coffee is ready, you will receive a push notification, telling yo
 
 <img align="right" src="./documentation/images/pw-coffee-maker.jpg" hspace="30" width="250" style="float: right">
 
-The project includes an [electronic circuit design](documentation/hardware.md), to interface a sanard coffee maker with the Intel Edison breakout board which support Bluetooth Low Energy, and Wifi.
+The project includes an [electronic circuit design](documentation/hardware.md), to interface a standard coffee maker with the Intel Edison breakout board which support Bluetooth Low Energy, and Wifi.
 
 The Edison board is connected to the Internet through Wifi and scan for a Physical Web beacon. When a URL Beacon enters at proximity, it resolves the URL, grabs your settings, and trigger a coffee brewing by changing the GPIO state.
 
@@ -38,7 +38,7 @@ Also, to illustrate all the functionalities and possibilities of this project a 
 #### Web
 - Web Components and Polymer
 - Firebase backend
-- Firebash Push Messenger
+- Firebase Push Messenger
 
 #### Peripheral
 - Intel Edison (+ Breakout board)
