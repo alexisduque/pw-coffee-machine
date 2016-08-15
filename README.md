@@ -1,5 +1,5 @@
 ## Google Summer of Code 2016
-Project Smart Coffee Machine with proximity pairing [(link)]()https://summerofcode.withgoogle.com/projects/#5774414150893568
+Project Smart Coffee Machine with proximity pairing [(link)](https://summerofcode.withgoogle.com/projects/#5774414150893568)
 
 Student Alexis Duque
 
