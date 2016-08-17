@@ -1,7 +1,7 @@
 Coffee machine hardware modifications
 -----
 
-This document explains how you can easily modificate a cheap filter coffe maker and inteface it with the Intel Edison beakout board.
+This document explains how you can easily hack a cheap filter coffee maker and interface it with the Intel Edison breakout board.
 
 ## Material
 * Intel Edison Breakout board [(Here)](http://fr.farnell.com/intel/edi2bb-al-k/x86-edison-breakout-board-kit/dp/2499336)
@@ -21,12 +21,12 @@ We will use **J20-2** (3.3V) **J19-3** (GND) **J19-6** (GPIO 48 - LED) **J19-10*
 
 As next step, you'll see that the 1.8V logical levels from the Edison are too small to light an LED or to pilot the relay module. Without level shifting, the Edison has 1.8V voltage levels.
 
-To solve this problem you may use a transistor. That what we will do in step 3.
+To solve this problem, you may use a transistor. That what we will do in step 3.
 The schematic looks as below:
 
 ![Transistor schematic](./images/trans-sch.png)
 
-## Step 2 : Disasemble the machine power block
+## Step 2 : Disassemble the machine power block
 
 Unscrew the coffee make power block cover. Usually, it is at the bottom.
 
@@ -38,20 +38,20 @@ It should looks like the next picture :
 ## Step 3 : Wire the machine to the Relay
 
 Cut the phase wire, which is the brown one in the Step 2 picture.
-Then, connect each end to the relay module, as in the next picture. The relay module will act as a switch, you can control with the Edison board.
+Then, connect each end to the relay module, as in the next picture. The relay module will act as a switch that you can control with the Edison board.
 
 Note that you may need to extend the wire length to place the relay module with more convenience.
 
 ![](./images/relay-pw.png)
 
 
-## Step4 : Wire the circuit
+## Step 4 : Wire the circuit
 
-Finally, wire the control circuit, to interface the Intel Edison GPIO with the relay moule on the breadboard, like in the following image.
+Finally, wire the control circuit, to interface the Intel Edison GPIO with the relay module on the breadboard, like in the following image.
 
 Your Intel Edison board can now controle the coffee maker
 ![](./images/edison-coffee_bb.png)
 
 
 
-### Since you ensure everythings works, next step is building a tiny case for the Intel EDISON and the circuit following this [tutorial](./casing.md)
+### Since you ensure everything works, next step is building a tiny case for the Intel EDISON and the circuit following this [tutorial](./casing.md)
