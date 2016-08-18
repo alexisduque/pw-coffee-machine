@@ -5,6 +5,8 @@ Student Alexis Duque
 
 *Developed under GSoC 2016 project Physical Web Project*
 
+[**Video presentation and demo**](https://www.youtube.com/watch?v=yIzFsWNXZu4)
+
 Physical Web Smart Coffee Machine with proximity pairing
 -----------
 
