@@ -220,11 +220,6 @@
         '_notesChanged(persistedNotes.*)'
       ],
       ready: function() {
-        /*
-        this.async(this._notesChanged, 5000);
-        this.async(function(){
-          this.listen(this.$.notes, 'dom-change', 'onNotesChange');
-        }, 5000);*/
         this.listen(this.$.charDataOne, 'platinum-bluetooth-auto-write-error', '_bluetoothEnded');
         this.listen(this.$.charDataTwo, 'platinum-bluetooth-auto-write-error', '_bluetoothEnded');
         this.listen(this.$.charDataLength, 'platinum-bluetooth-auto-write-error', '_bluetoothEnded');
